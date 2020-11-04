@@ -4,6 +4,7 @@ by __Nakul Iyer__ for __CS 126__
 In this project I would like to build a watered-down version of *Minecraft: Creative Mode*. These are the goals I hope to accomplish (in the order of general importance and interest):
 
 - [ ] allow the user to manuever a camera by rotation and transformation through the keyboard and mouse, and interact with three-dimensional objects
+  - [https://libcinder.org/docs/guides/opengl/part2.html](https://libcinder.org/docs/guides/opengl/part2.html) will be helpful here
 - [ ] dynamically create a three-dimensional world out of blocks through an RNG seed
   - [ ] a selection of designed blocks (i.e. grass, stone, etc) and maybe tools (i.e. axe, pickaxe) that will be significantly less than the original game but enough to test and play through
   - [ ] some noise function that will create a smooth world (not full of cliffs)
