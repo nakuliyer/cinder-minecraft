@@ -50,12 +50,8 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
 # App-specific files
-
-# list(APPEND CORE_SOURCE_FILES src/core/simulation.cc)
-list(APPEND VISUALIZER_SOURCE_FILES src/visualizer/camera.cc)
-
-list(APPEND SOURCE_FILES ${CORE_SOURCE_FILES} ${VISUALIZER_SOURCE_FILES})
-
+list(APPEND SOURCE_FILES src/core/camera.cc)
+list(APPEND SOURCE_FILES src/game_engine.cc)
 # list(APPEND TEST_FILES tests/core/simulation_test.cc)
 
 ci_make_app(

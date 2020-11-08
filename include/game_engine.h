@@ -1,5 +1,5 @@
-#ifndef IDEAL_GAS_NAKULIYER_IDEAL_GAS_APP_H
-#define IDEAL_GAS_NAKULIYER_IDEAL_GAS_APP_H
+#ifndef MINECRAFT_GAME_ENGINE_H
+#define MINECRAFT_GAME_ENGINE_H
 
 #include <string>
 
@@ -7,10 +7,9 @@
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
-#include "visualizer/direction.h"
+#include "core/camera.h"
 
 namespace minecraft {
-namespace visualizer {
 
 static const float kWindowSize = 575.0f;
 static const float kCentralPartition = 0.5f;
@@ -27,18 +26,13 @@ class MinecraftApp : public ci::app::App {
   void mouseMove(ci::app::MouseEvent e) override;
 
  private:
-  ci::vec3 camera_transform_;
-  ci::vec2 camera_rotation_;
+  Camera camera_;
 
-  void RotateCameraInDirection(Direction direction);
+  void PanScreen(const ci::vec2& mouse_point);
 
-  static Direction MapMousePointToWorld(const ci::vec2& mouse_point);
-  static ci::vec3 ProjectToUnitSphere(const ci::vec2& rotation);
   static bool IsBoundedBy(const ci::vec2& point, float x_min, float x_max,
                           float y_min, float y_max);
 };
-
-}  // namespace visualizer
 }  // namespace minecraft
 
-#endif  // IDEAL_GAS_NAKULIYER_IDEAL_GAS_APP_H
+#endif  // MINECRAFT_GAME_ENGINE_H

@@ -1,6 +1,6 @@
-#include "visualizer/camera.h"
+#include "game_engine.h"
 
-using minecraft::visualizer::MinecraftApp;
+using minecraft::MinecraftApp;
 
 void prepareSettings(MinecraftApp::Settings* settings) {
   settings->setResizable(false);
