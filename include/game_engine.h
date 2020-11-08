@@ -8,6 +8,7 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "core/camera.h"
+#include "core/world_map.h"
 
 namespace minecraft {
 
@@ -27,12 +28,14 @@ class MinecraftApp : public ci::app::App {
 
  private:
   Camera camera_;
+  WorldMap world_map_;
 
   void PanScreen(const ci::vec2& mouse_point);
 
   static bool IsBoundedBy(const ci::vec2& point, float x_min, float x_max,
                           float y_min, float y_max);
 };
+
 }  // namespace minecraft
 
 #endif  // MINECRAFT_GAME_ENGINE_H

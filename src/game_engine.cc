@@ -25,7 +25,7 @@ MinecraftApp::MinecraftApp() {
 void MinecraftApp::draw() {
   clear();
   camera_.Render();
-  drawCube(vec3(4, 0, 0), vec3(1, 1, 1));
+  world_map_.Render();
 }
 
 void MinecraftApp::update() {
@@ -68,9 +68,6 @@ void MinecraftApp::keyDown(KeyEvent e) {
 
 void MinecraftApp::mouseMove(MouseEvent e) {
   // TODO: this is where clicks are handled
-  // camera_focus_distance_ = projected;
-
-  // std::cout << projected << std::endl;
 }
 
 void MinecraftApp::PanScreen(const ci::vec2& mouse_point) {
