@@ -1,5 +1,5 @@
 // TODO: rename to camera
-#include "visualizer/minecraft.h"
+#include "visualizer/camera.h"
 
 #include "cinder/app/Window.h"
 
@@ -20,8 +20,6 @@ namespace minecraft {
 namespace visualizer {
 
 MinecraftApp::MinecraftApp() {
-//  camera_transform_ = vec3(4, 0, -4);
-//  camera_rotation_ = vec2(0, 3.14 / 2);
   camera_transform_ = vec3(0, 0, 0);
   camera_rotation_ = vec2(0, 0);
   setWindowSize((int)kWindowSize, (int)kWindowSize);
@@ -35,7 +33,7 @@ void MinecraftApp::draw() {
   CameraPersp cam;
   vec3 camera_focus_distance = ProjectToUnitSphere(camera_rotation_);
   cam.lookAt(camera_transform_, camera_transform_ + camera_focus_distance);
-  std::cout << camera_transform_ << " with rotation " << camera_rotation_ << " observing " << camera_focus_distance << std::endl;
+  // astd::cout << camera_transform_ << " with rotation " << camera_rotation_ << " observing " << camera_focus_distance << std::endl;
   setMatrices(cam);
 
   drawCube(vec3(4, 0, 0), vec3(1, 1, 1));
@@ -70,6 +68,12 @@ void MinecraftApp::keyDown(KeyEvent e) {
     case KeyEvent::KEY_a:
       camera_transform_.x += kMovementDistance * unit_sphere_directions.z;
       camera_transform_.z -= kMovementDistance * unit_sphere_directions.x;
+      break;
+    case KeyEvent::KEY_SPACE:
+      camera_transform_.y += kMovementDistance;
+      break;
+    case KeyEvent::KEY_LSHIFT:
+      camera_transform_.y -= kMovementDistance;
       break;
     default:
       break;

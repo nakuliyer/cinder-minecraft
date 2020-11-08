@@ -52,7 +52,7 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 # App-specific files
 
 # list(APPEND CORE_SOURCE_FILES src/core/simulation.cc)
-list(APPEND VISUALIZER_SOURCE_FILES src/visualizer/minecraft.cc)
+list(APPEND VISUALIZER_SOURCE_FILES src/visualizer/camera.cc)
 
 list(APPEND SOURCE_FILES ${CORE_SOURCE_FILES} ${VISUALIZER_SOURCE_FILES})
 

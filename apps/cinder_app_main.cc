@@ -1,4 +1,4 @@
-#include "visualizer/minecraft.h"
+#include "visualizer/camera.h"
 
 using minecraft::visualizer::MinecraftApp;
 
