@@ -15,15 +15,14 @@ WorldMap::WorldMap() {
   }
 }
 
-void WorldMap::Render() {
-  int i = 0;
+void WorldMap::Render(const vec3& camera_transform,
+                      const vec3& camera_forward) {
   for (const Block& block : blocks_) {
-    block.Render();
-    i++;
-    if (i >= 120) {
-      break;
+    if (abs(camera_transform.x - block.GetCenter().x) <= 20 &&
+        abs(camera_transform.z - block.GetCenter().z) <= 20 &&
+        ci::dot(block.GetCenter() - camera_transform, camera_forward) > 0) {
+      block.Render();
     }
-    // drawCube(block, vec3(1, 1, 1));
   }
 }
 

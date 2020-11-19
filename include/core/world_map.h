@@ -15,7 +15,7 @@ static const float kLandingRoom = 2;
 class WorldMap {
  public:
   WorldMap();
-  void Render();
+  void Render(const ci::vec3& camera_transform, const ci::vec3& camera_forward);
   bool isOnLand(const ci::vec3& transform);
 
  private:
