@@ -33,6 +33,9 @@ void MinecraftApp::update() {
   if (!IsBoundedBy(mouse_point, 0, kWindowSize, 0, kWindowSize)) {
     return;
   }
+  if (!world_map_.isOnLand(camera_.GetTransform())) {
+    camera_.TransformY(-kGravitySpeed);
+  }
   PanScreen(mouse_point);
 }
 
@@ -56,10 +59,7 @@ void MinecraftApp::keyDown(KeyEvent e) {
       camera_.TransformZ(-kMovementDistance * unit_sphere_directions.x);
       break;
     case KeyEvent::KEY_SPACE:
-      camera_.TransformY(kMovementDistance);
-      break;
-    case KeyEvent::KEY_LSHIFT:
-      camera_.TransformY(-kMovementDistance);
+      camera_.TransformY(kJumpSpeed);
       break;
     default:
       break;

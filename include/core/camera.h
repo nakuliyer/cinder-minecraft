@@ -15,7 +15,9 @@ class Camera {
   Camera() = default;
   void Render() const;
   ci::vec3 GetForwardVector() const;
+  void ApplyForce(ci::vec3 force);
 
+  ci::vec3 GetTransform() { return transform_; };
   void TransformX(float distance);
   void TransformY(float distance);
   void TransformZ(float distance);
@@ -24,6 +26,7 @@ class Camera {
 
  private:
   ci::vec3 transform_;
+  ci::vec3 velocity_;
   ci::vec2 rotation_;
 };
 
