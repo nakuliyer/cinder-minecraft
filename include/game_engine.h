@@ -16,7 +16,7 @@ static const float kWindowSize = 575.0f;
 static const float kCentralPartition = 0.5f;
 
 static const float kMovementDistance = 0.5f;
-static const float kJumpForce = 0.5f;       // velocity upwards on jump
+static const float kJumpForce = 0.2f;       // velocity upwards on jump
 static const float kGravityForce = 0.01f;   // acceleration downwards
 static const float kRotationSpeed = 0.05f;  // in radians
 

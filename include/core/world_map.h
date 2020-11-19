@@ -2,13 +2,13 @@
 #define MINECRAFT_WORLD_MAP_H
 
 #include <vector>
+
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
+#include "core/block.h"
 
 namespace minecraft {
-
-static const float kBlockWidth = 1;
 static const float kPlayerHeight = 2;
 static const float kLandingRoom = 2;
 
@@ -19,7 +19,7 @@ class WorldMap {
   bool isOnLand(const ci::vec3& transform);
 
  private:
-  std::vector<ci::vec3> blocks_;
+  std::vector<Block> blocks_;
 };
 
 }  // namespace minecraft

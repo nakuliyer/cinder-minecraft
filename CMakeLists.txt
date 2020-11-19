@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 11)
-project(mine-crafty)
+project(minecraft)
 
 # This tells the compiler to not aggressively optimize and
 # to include debugging information so that the debugger
@@ -52,6 +52,7 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 # App-specific files
 list(APPEND SOURCE_FILES src/core/camera.cc)
 list(APPEND SOURCE_FILES src/core/world_map.cc)
+list(APPEND SOURCE_FILES src/core/block.cc)
 list(APPEND SOURCE_FILES src/game_engine.cc)
 # list(APPEND TEST_FILES tests/core/simulation_test.cc)
 

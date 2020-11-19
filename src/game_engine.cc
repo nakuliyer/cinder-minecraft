@@ -34,7 +34,7 @@ void MinecraftApp::update() {
     return;
   }
   if (!world_map_.isOnLand(camera_.GetTransform())) {
-    // camera_.TransformY(-kGravitySpeed);
+    std::cout << "falling" << std::endl;
     camera_.ApplyYForce(-kGravityForce);
   } else {
     camera_.ApplyNormalForce();
@@ -63,6 +63,7 @@ void MinecraftApp::keyDown(KeyEvent e) {
       break;
     case KeyEvent::KEY_SPACE:
       if (world_map_.isOnLand(camera_.GetTransform())) {
+        std::cout << "jumping" << std::endl;
         camera_.ApplyYForce(kJumpForce);
       }
       break;
