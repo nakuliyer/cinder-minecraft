@@ -32,6 +32,15 @@ vec3 Camera::GetForwardVector() const {
               cos(rotation_.y) * sin(rotation_.x));
 }
 
+void Camera::ApplyYForce(float force) {
+  y_velocity_ = std::max(y_velocity_ + force, kTerminalVelocity);
+  transform_.y += y_velocity_;
+}
+
+void Camera::ApplyNormalForce() {
+  y_velocity_ = 0;
+}
+
 void Camera::TransformX(float distance) {
   transform_.x += distance;
 }

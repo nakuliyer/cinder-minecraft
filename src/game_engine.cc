@@ -11,9 +11,9 @@ using ci::app::setWindowSize;
 using ci::app::Window;
 using ci::gl::clear;
 using ci::gl::drawCube;
-using ci::gl::setMatrices;
 using ci::gl::enableDepthRead;
 using ci::gl::enableDepthWrite;
+using ci::gl::setMatrices;
 using minecraft::Camera;
 
 namespace minecraft {
@@ -34,7 +34,10 @@ void MinecraftApp::update() {
     return;
   }
   if (!world_map_.isOnLand(camera_.GetTransform())) {
-    camera_.TransformY(-kGravitySpeed);
+    // camera_.TransformY(-kGravitySpeed);
+    camera_.ApplyYForce(-kGravityForce);
+  } else {
+    camera_.ApplyNormalForce();
   }
   PanScreen(mouse_point);
 }
@@ -59,7 +62,9 @@ void MinecraftApp::keyDown(KeyEvent e) {
       camera_.TransformZ(-kMovementDistance * unit_sphere_directions.x);
       break;
     case KeyEvent::KEY_SPACE:
-      camera_.TransformY(kJumpSpeed);
+      if (world_map_.isOnLand(camera_.GetTransform())) {
+        camera_.ApplyYForce(kJumpForce);
+      }
       break;
     default:
       break;
