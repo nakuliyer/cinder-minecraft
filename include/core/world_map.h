@@ -10,19 +10,25 @@
 #include "core/block_types.h"
 
 namespace minecraft {
+
 static const float kPlayerHeight = 2;
 static const float kLandingRoom = 2;
 
 class WorldMap {
+  static const size_t kGenerationRadius = 4;
+  static const size_t kRenderRadius = 15;
+
  public:
   WorldMap();
-  void Render(const ci::vec3& camera_transform, const ci::vec3& camera_forward);
+  void Render(const ci::vec3& camera_transform_, const ci::vec3& camera_forward);
   bool IsOnLand(const ci::vec3& transform);
 
  private:
+  std::vector<int> chunk_;
   std::vector<Block> blocks_;
-  std::vector<Block> world_;
 
+  void GenerateAdjacentChunks();
+  void GenerateChunk(int delta_x, int delta_y, int delta_z);
   BlockTypes GetBlockAt(const ci::vec3& transform);
 };
 

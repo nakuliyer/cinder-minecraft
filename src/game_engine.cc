@@ -30,15 +30,14 @@ void MinecraftApp::draw() {
 
 void MinecraftApp::update() {
   vec2 mouse_point = getWindow()->getMousePos();
-  if (!IsBoundedBy(mouse_point, 0, kWindowSize, 0, kWindowSize)) {
-    return;
+  if (IsBoundedBy(mouse_point, 0, kWindowSize, 0, kWindowSize)) {
+    PanScreen(mouse_point);
   }
   if (!world_map_.IsOnLand(camera_.GetTransform())) {
     camera_.ApplyYForce(-kGravityForce);
   } else {
     camera_.ApplyNormalForce();
   }
-  PanScreen(mouse_point);
 }
 
 void MinecraftApp::keyDown(KeyEvent e) {
