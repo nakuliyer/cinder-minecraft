@@ -1,9 +1,12 @@
 #include "core/world_map.h"
 
+#include <thread>
+
 using ci::vec3;
 using ci::gl::drawCube;
 using glm::length;
 using std::abs;
+using std::thread;
 using std::vector;
 
 namespace minecraft {
@@ -11,25 +14,35 @@ namespace minecraft {
 WorldMap::WorldMap() {
   chunk_ = {0, 0, 0};
   GenerateAdjacentChunks();
-  //  for (int x = -20; x <= 20; ++x) {
-  //    for (int z = -20; z <= 20; ++z) {
-  //      blocks_.emplace_back(vec3(x, -3, z));
-  //    }
-  //  }
-  //  for (Block& block : blocks_) {
-  //    block.SetUp();
-  //  }
 }
 
 void WorldMap::Render(const vec3& player_transform,
                       const vec3& camera_forward) {
-  int chunk_x = int(player_transform.x / kGenerationRadius);
-  int chunk_y = int(player_transform.y / kGenerationRadius);
-  int chunk_z = int(player_transform.z / kGenerationRadius);
-  if (chunk_[0] != chunk_x || chunk_[1] != chunk_y || chunk_[2] != chunk_z) {
-    chunk_ = {chunk_x, chunk_y, chunk_z};
-    GenerateAdjacentChunks();
-  } else {
+  vector<int> chunk = GetChunk(player_transform);
+  if (chunk_[0] != chunk[0] || chunk_[1] != chunk[1] || chunk_[2] != chunk[2]) {
+    std::cout << "moved chunks" << std::endl;
+    size_t i = 0;
+    while (i < blocks_.size()) {
+      vector<int> block_chunk = GetChunk(blocks_[i].GetCenter());
+      if (abs(block_chunk[0] - chunk[0]) > 1 ||
+          abs(block_chunk[2] - chunk[2]) > 1) {
+        blocks_.erase(blocks_.begin() + i);
+      } else {
+        i++;
+      }
+    }
+    if (chunk[0] != chunk_[0]) {
+      GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 0);
+      GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, -1);
+      GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 1);
+    } else if (chunk[1] != chunk_[1]) {
+      GenerateChunk(0, 2 * (chunk[1] - chunk_[1]), 0);
+    } else if (chunk[2] != chunk_[2]) {
+      GenerateChunk(0, 0, 2 * (chunk[2] - chunk_[2]));
+      GenerateChunk(-1, 0, 2 * (chunk[2] - chunk_[2]));
+      GenerateChunk(1, 0, 2 * (chunk[2] - chunk_[2]));
+    }
+    chunk_ = {chunk[0], chunk[1], chunk[2]};
   }
   for (const Block& block : blocks_) {
     if (abs(player_transform.x - block.GetCenter().x) <= 15 &&
@@ -53,21 +66,28 @@ bool WorldMap::IsOnLand(const vec3& transform) {
   return false;
 }
 
+vector<int> WorldMap::GetChunk(const vec3& point) {
+  return vector<int>{int(point.x / kGenerationRadius),
+                     int(point.y / kGenerationRadius),
+                     int(point.z / kGenerationRadius)};
+}
+
 void WorldMap::GenerateAdjacentChunks() {
   blocks_.clear();
-  GenerateChunk(0, 0, 0);
-  GenerateChunk(1, 0, 0);
-  GenerateChunk(-1, 0, 0);
-  GenerateChunk(0, 0, -1);
-  GenerateChunk(0, 0, 1);
+  // size_t thread_count = std::thread::hardware_concurrency();
 
-//  for (int x : {-1, 0, 1}) {
-////    for (int y : {-1, 0, 1}) {
-//      for (int z : {-1, 0, 1}) {
-//        GenerateChunk(x, 0, z);
-//      }
-////    }
-//  }
+  vector<thread> pool;
+  pool.resize(1);  // TOOD: this should actually be 27 with the y-layer later
+
+  //  pool.emplace_back([this] { GenerateChunk(-1, 0, 0); });
+  //  pool.emplace_back([this] { GenerateChunk(1, 0, 0); });
+  //  pool.emplace_back([this] { GenerateChunk(0, 0, -1); });
+  //  pool.emplace_back([this] { GenerateChunk(0, 0, 1); });
+  for (int x = -1; x < 2; ++x) {
+    for (int z = -1; z < 2; ++z) {
+      GenerateChunk(x, 0, z);
+    }
+  }
 }
 
 void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
@@ -76,16 +96,16 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
                   (chunk_[2] + delta_z) * int(kGenerationRadius)};
   int half_width = int(kGenerationRadius / 2);
   for (int x = origin[0] - half_width; x < origin[0] + half_width; x++) {
-    //for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
+    for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
       for (int z = origin[2] - half_width; z < origin[2] + half_width; ++z) {
-        if (GetBlockAt(vec3(x, -3, z)) != BlockTypes::kNone) {
-          blocks_.emplace_back(vec3(x, -3, z));
+        if (GetBlockAt(vec3(x, y, z)) != BlockTypes::kNone) {
+          mutex_.lock();
+          blocks_.emplace_back(vec3(x, y, z));
+          blocks_.back().SetUp();
+          mutex_.unlock();
         }
       }
-    //}
-  }
-  for (Block& block : blocks_) {
-    block.SetUp();
+    }
   }
 }
 
