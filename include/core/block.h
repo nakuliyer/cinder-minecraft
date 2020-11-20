@@ -17,6 +17,7 @@ static const std::string kGrassTexture =
 class Block {
  public:
   Block(const ci::vec3& center);
+  void SetUp();
   void Render() const;
 
   ci::vec3 GetCenter() const { return center_; };

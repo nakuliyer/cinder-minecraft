@@ -7,6 +7,7 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "core/block.h"
+#include "core/block_types.h"
 
 namespace minecraft {
 static const float kPlayerHeight = 2;
@@ -16,10 +17,13 @@ class WorldMap {
  public:
   WorldMap();
   void Render(const ci::vec3& camera_transform, const ci::vec3& camera_forward);
-  bool isOnLand(const ci::vec3& transform);
+  bool IsOnLand(const ci::vec3& transform);
 
  private:
   std::vector<Block> blocks_;
+  std::vector<Block> world_;
+
+  BlockType GetBlockAt(const ci::vec3& transform);
 };
 
 }  // namespace minecraft

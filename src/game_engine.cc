@@ -33,7 +33,7 @@ void MinecraftApp::update() {
   if (!IsBoundedBy(mouse_point, 0, kWindowSize, 0, kWindowSize)) {
     return;
   }
-  if (!world_map_.isOnLand(camera_.GetTransform())) {
+  if (!world_map_.IsOnLand(camera_.GetTransform())) {
     camera_.ApplyYForce(-kGravityForce);
   } else {
     camera_.ApplyNormalForce();
@@ -61,7 +61,7 @@ void MinecraftApp::keyDown(KeyEvent e) {
       camera_.TransformZ(-kMovementDistance * unit_sphere_directions.x);
       break;
     case KeyEvent::KEY_SPACE:
-      if (world_map_.isOnLand(camera_.GetTransform())) {
+      if (world_map_.IsOnLand(camera_.GetTransform())) {
         camera_.ApplyYForce(kJumpForce);
       }
       break;
