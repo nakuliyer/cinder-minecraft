@@ -23,7 +23,7 @@ class WorldMap {
   std::vector<Block> blocks_;
   std::vector<Block> world_;
 
-  BlockType GetBlockAt(const ci::vec3& transform);
+  BlockTypes GetBlockAt(const ci::vec3& transform);
 };
 
 }  // namespace minecraft
