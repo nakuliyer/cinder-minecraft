@@ -16,7 +16,7 @@ static const float kLandingRoom = 2;
 
 class WorldMap {
   static const size_t kGenerationRadius =
-      8;  // TODO; this shouldn't have to be even
+      12;  // TODO; this shouldn't have to be even
   static const size_t kRenderRadius = 15;
 
  public:
@@ -29,7 +29,6 @@ class WorldMap {
   std::vector<int> chunk_;
   std::vector<Block> blocks_;
   std::vector<std::vector<Block>> chunks_;
-  std::mutex mutex_;
 
   static std::vector<int> GetChunk(const ci::vec3& point);
   void GenerateAdjacentChunks();

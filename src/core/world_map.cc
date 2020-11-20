@@ -9,6 +9,9 @@ using std::abs;
 using std::thread;
 using std::vector;
 
+#include <catch2/catch.hpp>
+#include <noise/noise.h>
+
 namespace minecraft {
 
 WorldMap::WorldMap() {
@@ -74,15 +77,6 @@ vector<int> WorldMap::GetChunk(const vec3& point) {
 
 void WorldMap::GenerateAdjacentChunks() {
   blocks_.clear();
-  // size_t thread_count = std::thread::hardware_concurrency();
-
-  vector<thread> pool;
-  pool.resize(1);  // TOOD: this should actually be 27 with the y-layer later
-
-  //  pool.emplace_back([this] { GenerateChunk(-1, 0, 0); });
-  //  pool.emplace_back([this] { GenerateChunk(1, 0, 0); });
-  //  pool.emplace_back([this] { GenerateChunk(0, 0, -1); });
-  //  pool.emplace_back([this] { GenerateChunk(0, 0, 1); });
   for (int x = -1; x < 2; ++x) {
     for (int z = -1; z < 2; ++z) {
       GenerateChunk(x, 0, z);
@@ -99,10 +93,8 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
     for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
       for (int z = origin[2] - half_width; z < origin[2] + half_width; ++z) {
         if (GetBlockAt(vec3(x, y, z)) != BlockTypes::kNone) {
-          mutex_.lock();
           blocks_.emplace_back(vec3(x, y, z));
           blocks_.back().SetUp();
-          mutex_.unlock();
         }
       }
     }

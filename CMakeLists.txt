@@ -14,35 +14,50 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Warning flags
-if(MSVC)
+if (MSVC)
     # warning level 3 and all warnings as errors
     add_compile_options(/W3 /WX)
-else()
+else ()
     # lots of warnings and all warnings as errors
     add_compile_options(-Wall -Wpedantic -Werror)
-endif()
+endif ()
 
 # FetchContent added in CMake 3.11, downloads during the configure step
 include(FetchContent)
 
 # FetchContent_MakeAvailable was not added until CMake 3.14
-if(${CMAKE_VERSION} VERSION_LESS 3.14)
+if (${CMAKE_VERSION} VERSION_LESS 3.14)
     include(cmake/add_FetchContent_MakeAvailable.cmake)
-endif()
+endif ()
 
 FetchContent_Declare(
         catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG        v2.5.0
+        GIT_TAG v2.5.0
 )
 
 # Adds Catch2 testing library
 FetchContent_GetProperties(catch2)
-if(NOT catch2_POPULATED)
+if (NOT catch2_POPULATED)
     FetchContent_Populate(catch2)
     add_library(catch2 INTERFACE)
     target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
-endif()
+endif ()
+
+FetchContent_Declare(
+        libnoise
+        GIT_REPOSITORY https://github.com/eXpl0it3r/libnoise.git
+        GIT_TAG master
+)
+
+# Adds libnoise library
+FetchContent_GetProperties(libnoise)
+if (NOT libnoise_POPULATED)
+    FetchContent_Populate(libnoise)
+    add_library(libnoise INTERFACE)
+    target_include_directories(libnoise INTERFACE ${libnoise_SOURCE_DIR}/include)
+
+endif ()
 
 get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ABSOLUTE)
 get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
@@ -57,10 +72,11 @@ list(APPEND SOURCE_FILES src/game_engine.cc)
 # list(APPEND TEST_FILES tests/core/simulation_test.cc)
 
 ci_make_app(
-        APP_NAME        minecraft
-        CINDER_PATH     ${CINDER_PATH}
-        SOURCES         apps/cinder_app_main.cc ${SOURCE_FILES}
-        INCLUDES        include
+        APP_NAME minecraft
+        CINDER_PATH ${CINDER_PATH}
+        SOURCES apps/cinder_app_main.cc ${SOURCE_FILES}
+        INCLUDES include
+        LIBRARIES libnoise catch2
 )
 
 # ci_make_app(
@@ -72,6 +88,6 @@ ci_make_app(
 #         LIBRARIES       catch2
 # )
 
-if(MSVC)
+if (MSVC)
     set_property(TARGET ideal-gas-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
-endif()
+endif ()
