@@ -2,6 +2,7 @@
 #define MINECRAFT_WORLD_MAP_H
 
 #include <vector>
+#include <FastNoiseLite.h>
 
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
@@ -11,8 +12,8 @@
 
 namespace minecraft {
 
-static const float kPlayerHeight = 2;
-static const float kLandingRoom = 2;
+static const float kPlayerHeight = 3;
+static const float kLandingRoom = 3;
 
 class WorldMap {
   static const size_t kGenerationRadius =
@@ -29,6 +30,7 @@ class WorldMap {
   std::vector<int> chunk_;
   std::vector<Block> blocks_;
   std::vector<std::vector<Block>> chunks_;
+  FastNoiseLite noise_;
 
   static std::vector<int> GetChunk(const ci::vec3& point);
   void GenerateAdjacentChunks();

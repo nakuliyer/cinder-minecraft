@@ -45,18 +45,17 @@ if (NOT catch2_POPULATED)
 endif ()
 
 FetchContent_Declare(
-        libnoise
-        GIT_REPOSITORY https://github.com/eXpl0it3r/libnoise.git
+        fastnoise
+        GIT_REPOSITORY https://github.com/Auburn/FastNoise.git
         GIT_TAG master
 )
 
-# Adds libnoise library
-FetchContent_GetProperties(libnoise)
-if (NOT libnoise_POPULATED)
-    FetchContent_Populate(libnoise)
-    add_library(libnoise INTERFACE)
-    target_include_directories(libnoise INTERFACE ${libnoise_SOURCE_DIR}/include)
-
+# Adds fastnoise library
+FetchContent_GetProperties(fastnoise)
+if (NOT fastnoise_POPULATED)
+    FetchContent_Populate(fastnoise)
+    add_library(fastnoise INTERFACE)
+    target_include_directories(fastnoise INTERFACE ${fastnoise_SOURCE_DIR}/Cpp)
 endif ()
 
 get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ABSOLUTE)
@@ -76,7 +75,7 @@ ci_make_app(
         CINDER_PATH ${CINDER_PATH}
         SOURCES apps/cinder_app_main.cc ${SOURCE_FILES}
         INCLUDES include
-        LIBRARIES libnoise catch2
+        LIBRARIES catch2 fastnoise
 )
 
 # ci_make_app(

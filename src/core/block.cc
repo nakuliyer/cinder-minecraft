@@ -19,8 +19,10 @@ Block::Block(const vec3& center) {
 }
 
 void Block::SetUp() {
-  texture_ = Texture2d::create(loadImage(kGrassTexture));
+  texture_top_ = Texture2d::create(loadImage(kMartianDirtTop));
+  texture_side_ = Texture2d::create(loadImage(kMartianDirtSide));
   mesh_ = TriMesh(TriMesh::Format().positions().texCoords(2));
+  top_mesh_ = TriMesh(TriMesh::Format().positions().texCoords(2));
   vec2 texture_vertices[4] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
 
   vec3 vertices[8] = {{-0.5, -0.5f, -0.5f}, {0.5f, -0.5f, -0.5f},
@@ -30,14 +32,13 @@ void Block::SetUp() {
   for (vec3& vertex : vertices) {
     vertex += center_;
   }
-  vec3 faces[6][4] = {{vertices[0], vertices[1], vertices[2], vertices[3]},
-                      {vertices[3], vertices[2], vertices[6], vertices[7]},
+  vec3 faces[5][4] = {{vertices[0], vertices[1], vertices[2], vertices[3]},
+                      // {vertices[3], vertices[2], vertices[6], vertices[7]},
                       {vertices[7], vertices[6], vertices[5], vertices[4]},
                       {vertices[4], vertices[5], vertices[1], vertices[0]},
                       {vertices[5], vertices[6], vertices[2], vertices[1]},
                       {vertices[7], vertices[4], vertices[0], vertices[3]}};
-  //  vec3 faces[1][4] = {{vertices[4], vertices[5], vertices[1], vertices[0]}};
-
+  vec3 top[1][4] = {{vertices[3], vertices[2], vertices[6], vertices[7]}};
 
   for (auto& face : faces) {
     for (size_t vertex = 0; vertex < 4; vertex++) {
@@ -50,14 +51,26 @@ void Block::SetUp() {
     mesh_.appendTriangle(numberVertices - 4, numberVertices - 2,
                          numberVertices - 1);
   }
+  for (auto& face : top) {
+    for (size_t vertex = 0; vertex < 4; vertex++) {
+      top_mesh_.appendPosition(face[vertex]);
+      top_mesh_.appendTexCoord(texture_vertices[vertex]);
+    }
+    size_t numberVertices = top_mesh_.getNumVertices();
+    top_mesh_.appendTriangle(numberVertices - 4, numberVertices - 3,
+                             numberVertices - 2);
+    top_mesh_.appendTriangle(numberVertices - 4, numberVertices - 2,
+                             numberVertices - 1);
+  }
 }
 
 void Block::Render() const {
   ci::gl::ScopedGlslProg glslScope{
       ci::gl::getStockShader(ci::gl::ShaderDef().texture())};
-  ci::gl::ScopedTextureBind texScope{texture_};
-
+  ci::gl::ScopedTextureBind texScope{texture_side_};
   ci::gl::draw(mesh_);
+  ci::gl::ScopedTextureBind texScopeTop{texture_top_};
+  ci::gl::draw(top_mesh_);
 }
 
 }  // namespace minecraft

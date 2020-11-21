@@ -10,9 +10,12 @@
 
 namespace minecraft {
 
-static const std::string kGrassTexture =
+static const std::string kMartianDirtSide =
     "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
-    "final-project-nakuliyer/src/core/texture.png";
+    "final-project-nakuliyer/src/core/martian_dirt_side.png";
+static const std::string kMartianDirtTop =
+    "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
+    "final-project-nakuliyer/src/core/martian_dirt_top.jpg";
 
 class Block {
  public:
@@ -23,8 +26,10 @@ class Block {
   ci::vec3 GetCenter() const { return center_; };
 
  private:
-  ci::gl::Texture2dRef texture_;
+  ci::gl::Texture2dRef texture_top_; // TODO: do this dynamically
+  ci::gl::Texture2dRef texture_side_;
   ci::TriMesh mesh_;
+  ci::TriMesh top_mesh_;
   ci::vec3 center_;
 };
 

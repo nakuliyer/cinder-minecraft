@@ -1,22 +1,22 @@
 #include "core/world_map.h"
 
-#include <thread>
-
 using ci::vec3;
 using ci::gl::drawCube;
 using glm::length;
 using std::abs;
-using std::thread;
 using std::vector;
-
-#include <catch2/catch.hpp>
-#include <noise/noise.h>
 
 namespace minecraft {
 
 WorldMap::WorldMap() {
   chunk_ = {0, 0, 0};
   GenerateAdjacentChunks();
+  noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+  for (int x = 0; x < 16; x++) {
+    for (int y = 0; y < 16; y++) {
+      std::cout << "(" << x << ", " << y << ") -> " << noise_.GetNoise(float(x), float(y)) << std::endl;
+    }
+  }
 }
 
 void WorldMap::Render(const vec3& player_transform,
@@ -103,7 +103,7 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
 
 BlockTypes WorldMap::GetBlockAt(const vec3& transform) {
   // TODO: here is where the noise function makes sense
-  if (transform.y == -3) {
+  if (transform.y == int(noise_.GetNoise(transform.x, transform.z) * 5) - 3) {
     return BlockTypes::kGrass;
   }
   return BlockTypes::kNone;
