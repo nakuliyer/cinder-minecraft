@@ -1,5 +1,7 @@
 #include "core/block.h"
 
+#include "core/texture.h"
+
 using ci::Color;
 using ci::loadImage;
 using ci::TriMesh;

@@ -67,6 +67,7 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 list(APPEND SOURCE_FILES src/core/camera.cc)
 list(APPEND SOURCE_FILES src/core/world_map.cc)
 list(APPEND SOURCE_FILES src/core/block.cc)
+list(APPEND SOURCE_FILES src/core/texture.cc)
 list(APPEND SOURCE_FILES src/game_engine.cc)
 # list(APPEND TEST_FILES tests/core/simulation_test.cc)
 
