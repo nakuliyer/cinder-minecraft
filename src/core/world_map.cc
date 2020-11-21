@@ -11,20 +11,13 @@ namespace minecraft {
 WorldMap::WorldMap() {
   chunk_ = {0, 0, 0};
   GenerateAdjacentChunks();
-  noise_.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-  for (int x = 0; x < 16; x++) {
-    for (int y = 0; y < 16; y++) {
-      std::cout << "(" << x << ", " << y << ") -> " << noise_.GetNoise(float(x), float(y)) << std::endl;
-    }
-  }
+  noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 }
 
 void WorldMap::Render(const vec3& player_transform,
                       const vec3& camera_forward) {
-  std::cout << "(" << player_transform.x << ", " <<player_transform.z << ")" << std::endl;
   vector<int> chunk = GetChunk(player_transform);
   if (chunk_[0] != chunk[0] || chunk_[1] != chunk[1] || chunk_[2] != chunk[2]) {
-    std::cout << "moved chunks" << std::endl;
     size_t i = 0;
     while (i < blocks_.size()) {
       vector<int> block_chunk = GetChunk(blocks_[i].GetCenter());
@@ -104,8 +97,8 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
 }
 
 BlockTypes WorldMap::GetBlockAt(const vec3& transform) {
-  // TODO: here is where the noise function makes sense
-  if (transform.y == int(noise_.GetNoise(transform.x, transform.z) * 5) - 3) {
+  int height = int(noise_.GetNoise(transform.x, transform.z) * 5);
+  if (int(transform.y) <= height - 3) {
     return BlockTypes::kGrass;
   }
   return BlockTypes::kNone;
