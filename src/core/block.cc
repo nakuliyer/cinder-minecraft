@@ -14,17 +14,17 @@ using std::vector;
 
 namespace minecraft {
 
-Block::Block(const vec3& center) {
-  // https://mottosso.gitbooks.io/cinder/content/book/guide_to_meshes.html
-  // https://drewish.com/2014/08/23/using-cinder%27s-cameraortho-and-vbomesh-to-draw-cubes/
+Block::Block(const BlockTypes& block_type, const vec3& center) {
+  texture_ = Texture(block_type).GetTexture();
+  block_type_ = block_type;
   center_ = center;
 }
 
 void Block::SetUp() {
-  texture_side_ = Texture2d::create(loadImage(kMartianDirtSide));
+  // https://mottosso.gitbooks.io/cinder/content/book/guide_to_meshes.html
+  // https://drewish.com/2014/08/23/using-cinder%27s-cameraortho-and-vbomesh-to-draw-cubes/
   mesh_ = TriMesh(TriMesh::Format().positions().texCoords(2));
-  vec2 texture_vertices[4] = {{0, 0}, {0.5, 0}, {0.5, 1}, {0, 1}};
-  vec2 top_vertices[4] = {{0.5, 0}, {1, 0}, {1, 1}, {0.5, 1}};
+  vec2 texture_vertices[4] = {{0, 0}, {0.167f, 0}, {0.167f, 1}, {0, 1}};
 
   vec3 vertices[8] = {{-0.5, -0.5f, -0.5f}, {0.5f, -0.5f, -0.5f},
                       {0.5f, 0.5f, -0.5f},  {-0.5f, 0.5f, -0.5f},
@@ -34,8 +34,8 @@ void Block::SetUp() {
     vertex += center_;
   }
   vec3 faces[6][4] = {
-      {vertices[0], vertices[1], vertices[2], vertices[3]},
       {vertices[3], vertices[2], vertices[6], vertices[7]},  // TOP
+      {vertices[0], vertices[1], vertices[2], vertices[3]},
       {vertices[7], vertices[6], vertices[5], vertices[4]},
       {vertices[4], vertices[5], vertices[1], vertices[0]},
       {vertices[5], vertices[6], vertices[2], vertices[1]},
@@ -45,11 +45,7 @@ void Block::SetUp() {
   for (auto& face : faces) {
     for (size_t vertex = 0; vertex < 4; vertex++) {
       mesh_.appendPosition(face[vertex]);
-      if (i == 1) {
-        mesh_.appendTexCoord(top_vertices[vertex]);
-      } else {
-        mesh_.appendTexCoord(texture_vertices[vertex]);
-      }
+      mesh_.appendTexCoord(texture_vertices[vertex] + vec2(i * 0.167f, 0));
     }
     i++;
     size_t numberVertices = mesh_.getNumVertices();
@@ -63,7 +59,7 @@ void Block::SetUp() {
 void Block::Render() const {
   ci::gl::ScopedGlslProg glslScope{
       ci::gl::getStockShader(ci::gl::ShaderDef().texture())};
-  ci::gl::ScopedTextureBind texScope{texture_side_};
+  ci::gl::ScopedTextureBind texScope{texture_};
   ci::gl::draw(mesh_);
 }
 

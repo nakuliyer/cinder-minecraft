@@ -4,9 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "cinder/app/App.h"
-#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
+#include "core/block_types.h"
 
 namespace minecraft {
 
@@ -16,18 +15,19 @@ static const std::string kMartianDirtSide =
 
 class Block {
  public:
-  Block(const ci::vec3& center);
+  Block(const BlockTypes& b, const ci::vec3& center);
   void SetUp();
   void Render() const;
 
-  ci::vec3 GetCenter() const { return center_; };
+  ci::vec3 GetCenter() const {
+    return center_;
+  };
 
  private:
-  ci::gl::Texture2dRef texture_top_; // TODO: do this dynamically
-  ci::gl::Texture2dRef texture_side_;
+  ci::gl::Texture2dRef texture_;
   ci::TriMesh mesh_;
-  ci::TriMesh top_mesh_;
   ci::vec3 center_;
+  BlockTypes block_type_;
 };
 
 }  // namespace minecraft

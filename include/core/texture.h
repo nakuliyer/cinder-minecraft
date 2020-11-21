@@ -4,17 +4,16 @@
 #include <string>
 
 #include "cinder/gl/gl.h"
-#include "block_types.h"
+#include "core/block_types.h"
 
 namespace minecraft {
 
 static const std::string kAssetsRoot =
     "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
-    "final-project-nakuliyer/src/core/";
+    "final-project-nakuliyer/assets/";
 
 static const std::map<BlockTypes, std::string> kTextureFiles = {
-    {kGrass, "moon_texture.png"}
-};
+    {kGrass, "dirt.png"}};
 
 class Texture {
  public:
@@ -28,15 +27,5 @@ class Texture {
 };
 
 }  // namespace minecraft
-
-// std::string block_to_texture(BlockTypes block_type) {
-//  switch (block_type) {
-//    case BlockTypes::kGrass:
-//      return "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
-//             "final-project-nakuliyer/src/core/texture.png";
-//    default:
-//      return "";
-//  }
-//}
 
 #endif  // MINECRAFT_TEXTURE_H

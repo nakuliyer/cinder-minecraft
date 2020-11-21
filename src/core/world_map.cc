@@ -21,6 +21,7 @@ WorldMap::WorldMap() {
 
 void WorldMap::Render(const vec3& player_transform,
                       const vec3& camera_forward) {
+  std::cout << "(" << player_transform.x << ", " <<player_transform.z << ")" << std::endl;
   vector<int> chunk = GetChunk(player_transform);
   if (chunk_[0] != chunk[0] || chunk_[1] != chunk[1] || chunk_[2] != chunk[2]) {
     std::cout << "moved chunks" << std::endl;
@@ -92,8 +93,9 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
   for (int x = origin[0] - half_width; x < origin[0] + half_width; x++) {
     for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
       for (int z = origin[2] - half_width; z < origin[2] + half_width; ++z) {
-        if (GetBlockAt(vec3(x, y, z)) != BlockTypes::kNone) {
-          blocks_.emplace_back(vec3(x, y, z));
+        BlockTypes block_type = GetBlockAt(vec3(x, y, z));
+        if (block_type != BlockTypes::kNone) {
+          blocks_.emplace_back(block_type, vec3(x, y, z));
           blocks_.back().SetUp();
         }
       }
