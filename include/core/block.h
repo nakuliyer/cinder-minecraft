@@ -12,10 +12,7 @@ namespace minecraft {
 
 static const std::string kMartianDirtSide =
     "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
-    "final-project-nakuliyer/src/core/martian_dirt_side.png";
-static const std::string kMartianDirtTop =
-    "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
-    "final-project-nakuliyer/src/core/martian_dirt_top.jpg";
+    "final-project-nakuliyer/src/core/moon_texture.png";
 
 class Block {
  public:

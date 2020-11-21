@@ -17,7 +17,7 @@ static const float kLandingRoom = 3;
 
 class WorldMap {
   static const size_t kGenerationRadius =
-      12;  // TODO; this shouldn't have to be even
+      6;  // TODO; this shouldn't have to be even
   static const size_t kRenderRadius = 15;
 
  public:
