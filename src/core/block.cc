@@ -31,6 +31,7 @@ Block::Block(const BlockTypes& block_type, const vec3& center) {
   texture_ = Texture(block_type).GetTexture();
   block_type_ = block_type;
   center_ = center;
+  SetUp();
 }
 
 void Block::SetUp() {

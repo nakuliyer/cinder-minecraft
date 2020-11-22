@@ -58,7 +58,6 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
         BlockTypes block_type = GenerateBlockAt(vec3(x, y, z));
         if (block_type != BlockTypes::kNone) {
           blocks_.emplace_back(block_type, vec3(x, y, z));
-          blocks_.back().SetUp();
         }
       }
     }
