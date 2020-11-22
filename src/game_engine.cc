@@ -44,20 +44,16 @@ void MinecraftApp::keyDown(KeyEvent e) {
   vec3 forward = camera_.GetForwardVector();
   switch (e.getCode()) {
     case KeyEvent::KEY_w:
-      MoveIfPossible(kMovementDistance * forward.x,
-                     kMovementDistance * forward.z);
+      MoveIfPossible(kMoveDistance * forward.x, kMoveDistance * forward.z);
       break;
     case KeyEvent::KEY_d:
-      MoveIfPossible(-kMovementDistance * forward.z,
-                     kMovementDistance * forward.x);
+      MoveIfPossible(-kMoveDistance * forward.z, kMoveDistance * forward.x);
       break;
     case KeyEvent::KEY_s:
-      MoveIfPossible(-kMovementDistance * forward.x,
-                     -kMovementDistance * forward.z);
+      MoveIfPossible(-kMoveDistance * forward.x, -kMoveDistance * forward.z);
       break;
     case KeyEvent::KEY_a:
-      MoveIfPossible(kMovementDistance * forward.z,
-                     -kMovementDistance * forward.x);
+      MoveIfPossible(kMoveDistance * forward.z, -kMoveDistance * forward.x);
       break;
     case KeyEvent::KEY_SPACE:
       if (BlockExistsAt(0, -kPlayerHeight, 0)) {

@@ -2,6 +2,8 @@
 
 using ci::vec3;
 using ci::gl::drawCube;
+using glm::distance;
+using glm::dot;
 using glm::length;
 using std::abs;
 using std::vector;
@@ -18,50 +20,17 @@ void WorldMap::Render(const vec3& player_transform,
                       const vec3& camera_forward) {
   vector<int> chunk = GetChunk(player_transform);
   if (chunk_[0] != chunk[0] || chunk_[1] != chunk[1] || chunk_[2] != chunk[2]) {
-    size_t i = 0;
-    while (i < blocks_.size()) {
-      vector<int> block_chunk = GetChunk(blocks_[i].GetCenter());
-      if (abs(block_chunk[0] - chunk[0]) > 1 ||
-          abs(block_chunk[2] - chunk[2]) > 1) {
-        blocks_.erase(blocks_.begin() + i);
-      } else {
-        i++;
-      }
-    }
-    if (chunk[0] != chunk_[0]) {
-      GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 0);
-      GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, -1);
-      GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 1);
-    } else if (chunk[1] != chunk_[1]) {
-      GenerateChunk(0, 2 * (chunk[1] - chunk_[1]), 0);
-    } else if (chunk[2] != chunk_[2]) {
-      GenerateChunk(0, 0, 2 * (chunk[2] - chunk_[2]));
-      GenerateChunk(-1, 0, 2 * (chunk[2] - chunk_[2]));
-      GenerateChunk(1, 0, 2 * (chunk[2] - chunk_[2]));
-    }
+    DeleteDistanceChunks(chunk);
+    LoadNextChunk(chunk);
     chunk_ = {chunk[0], chunk[1], chunk[2]};
   }
   for (const Block& block : blocks_) {
-    if (abs(player_transform.x - block.GetCenter().x) <= 15 &&
-        abs(player_transform.z - block.GetCenter().z) <= 15 &&
-        ci::dot(block.GetCenter() - player_transform, camera_forward) > 0) {
+    if (distance(player_transform, block.GetCenter()) <= kRenderRadius &&
+        dot(block.GetCenter() - player_transform, camera_forward) > 0) {
       block.Render();
     }
   }
 }
-
-// bool WorldMap::IsOnLand(const vec3& transform) {
-//  for (const Block& block : blocks_) {
-//    if (abs(transform.x - block.GetCenter().x) <= 0.5 &&
-//        abs(transform.z - block.GetCenter().z) <= 0.5 &&
-//        transform.y - block.GetCenter().y >
-//            0.5 + kPlayerHeight - kLandingRoom &&
-//        transform.y - block.GetCenter().y < 0.5 + kPlayerHeight) {
-//      return true;
-//    }
-//  }
-//  return false;
-//}
 
 vector<int> WorldMap::GetChunk(const vec3& point) {
   return vector<int>{int(point.x / (2 * kGenerationRadius)),
@@ -96,6 +65,33 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
   }
 }
 
+void WorldMap::DeleteDistanceChunks(const vector<int>& chunk) {
+  size_t block_index = 0;
+  while (block_index < blocks_.size()) {
+    vector<int> block_chunk = GetChunk(blocks_[block_index].GetCenter());
+    if (abs(block_chunk[0] - chunk[0]) > 1 ||
+        abs(block_chunk[2] - chunk[2]) > 1) {
+      blocks_.erase(blocks_.begin() + block_index);
+    } else {
+      ++block_index;
+    }
+  }
+}
+
+void WorldMap::LoadNextChunk(const vector<int>& chunk) {
+  if (chunk[0] != chunk_[0]) {
+    GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 0);
+    GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, -1);
+    GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 1);
+  } else if (chunk[1] != chunk_[1]) {
+    GenerateChunk(0, 2 * (chunk[1] - chunk_[1]), 0);
+  } else if (chunk[2] != chunk_[2]) {
+    GenerateChunk(0, 0, 2 * (chunk[2] - chunk_[2]));
+    GenerateChunk(-1, 0, 2 * (chunk[2] - chunk_[2]));
+    GenerateChunk(1, 0, 2 * (chunk[2] - chunk_[2]));
+  }
+}
+
 BlockTypes WorldMap::GetBlockAt(const vec3& transform) {
   for (const Block& block : blocks_) {
     if (abs(block.GetCenter().x - transform.x) <= 0.5 &&
@@ -108,9 +104,9 @@ BlockTypes WorldMap::GetBlockAt(const vec3& transform) {
 }
 
 BlockTypes WorldMap::GenerateBlockAt(const vec3& transform) {
-  int height =
-      int(noise_.GetNoise(round(transform.x), round(transform.z)) * 5.0f);
-  if (int(round(transform.y)) <= int(height - 3)) {
+  float height =
+      noise_.GetNoise(round(transform.x), round(transform.z)) * 5.0f - 3.0f;
+  if (int(round(transform.y)) <= int(height)) {
     return BlockTypes::kGrass;
   }
   return BlockTypes::kNone;

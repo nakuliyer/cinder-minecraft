@@ -4,8 +4,6 @@
 #include <string>
 
 #include "cinder/Camera.h"
-#include "cinder/app/App.h"
-#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "core/camera.h"
 #include "core/world_map.h"
@@ -15,7 +13,7 @@ namespace minecraft {
 static const float kWindowSize = 575.0f;
 static const float kCentralPartition = 0.5f;
 
-static const float kMovementDistance = 0.5f;
+static const float kMoveDistance = 0.5f;
 static const float kJumpForce = 0.4f;       // velocity upwards on jump
 static const float kGravityForce = 0.05f;   // acceleration downwards
 static const float kRotationSpeed = 0.05f;  // in radians

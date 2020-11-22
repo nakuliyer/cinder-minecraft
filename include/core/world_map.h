@@ -11,9 +11,6 @@
 
 namespace minecraft {
 
-//static const float kPlayerHeight = 3;
-//static const float kLandingRoom = 3;
-
 class WorldMap {
   static const size_t kGenerationRadius = 3;
   static const size_t kRenderRadius = 15;
@@ -22,15 +19,15 @@ class WorldMap {
   WorldMap();
   void Render(const ci::vec3& camera_transform_,
               const ci::vec3& camera_forward);
-  // bool IsOnLand(const ci::vec3& transform);
   BlockTypes GetBlockAt(const ci::vec3& transform);
 
  private:
   std::vector<int> chunk_;
   std::vector<Block> blocks_;
-  std::vector<std::vector<Block>> chunks_;
   FastNoiseLite noise_;
 
+  void DeleteDistanceChunks(const std::vector<int>& chunk);
+  void LoadNextChunk(const std::vector<int>& chunk);
   BlockTypes GenerateBlockAt(const ci::vec3& transform);
   static std::vector<int> GetChunk(const ci::vec3& point);
   void GenerateAdjacentChunks();

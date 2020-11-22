@@ -63,4 +63,12 @@ void Block::Render() const {
   ci::gl::draw(mesh_);
 }
 
+BlockTypes Block::GetType() const {
+  return block_type_;
+}
+
+vec3 Block::GetCenter() const {
+  return center_;
+}
+
 }  // namespace minecraft

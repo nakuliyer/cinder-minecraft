@@ -9,23 +9,13 @@
 
 namespace minecraft {
 
-static const std::string kMartianDirtSide =
-    "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
-    "final-project-nakuliyer/src/core/moon_texture.png";
-
 class Block {
  public:
   Block(const BlockTypes& b, const ci::vec3& center);
   void SetUp();
   void Render() const;
-
-  BlockTypes GetType() const {
-    return block_type_;
-  }
-
-  ci::vec3 GetCenter() const {
-    return center_;
-  };
+  BlockTypes GetType() const;
+  ci::vec3 GetCenter() const;
 
  private:
   ci::gl::Texture2dRef texture_;
