@@ -1,6 +1,5 @@
-#ifndef MINECRAFT_WORLD_MAP_H
-#define MINECRAFT_WORLD_MAP_H
-
+#ifndef MINECRAFT_WORLD_H
+#define MINECRAFT_WORLD_H
 
 #include <vector>
 #include <FastNoiseLite.h>
@@ -11,12 +10,12 @@
 
 namespace minecraft {
 
-class WorldMap {
+class World {
   static const size_t kGenerationRadius = 3;
   static const size_t kRenderRadius = 15;
 
  public:
-  WorldMap();
+  World();
   void Render(const ci::vec3& camera_transform_,
               const ci::vec3& camera_forward);
   BlockTypes GetBlockAt(const ci::vec3& transform);

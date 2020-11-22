@@ -1,4 +1,4 @@
-#include "core/world_map.h"
+#include "core/world.h"
 
 using ci::vec3;
 using ci::gl::drawCube;
@@ -10,13 +10,13 @@ using std::vector;
 
 namespace minecraft {
 
-WorldMap::WorldMap() {
+World::World() {
   chunk_ = {0, 0, 0};
   GenerateAdjacentChunks();
   noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 }
 
-void WorldMap::Render(const vec3& player_transform,
+void World::Render(const vec3& player_transform,
                       const vec3& camera_forward) {
   vector<int> chunk = GetChunk(player_transform);
   if (chunk_[0] != chunk[0] || chunk_[1] != chunk[1] || chunk_[2] != chunk[2]) {
@@ -32,13 +32,13 @@ void WorldMap::Render(const vec3& player_transform,
   }
 }
 
-vector<int> WorldMap::GetChunk(const vec3& point) {
+vector<int> World::GetChunk(const vec3& point) {
   return vector<int>{int(point.x / (2 * kGenerationRadius)),
                      int(point.y / (2 * kGenerationRadius)),
                      int(point.z / (2 * kGenerationRadius))};
 }
 
-void WorldMap::GenerateAdjacentChunks() {
+void World::GenerateAdjacentChunks() {
   blocks_.clear();
   for (int x = -1; x < 2; ++x) {
     for (int z = -1; z < 2; ++z) {
@@ -47,7 +47,7 @@ void WorldMap::GenerateAdjacentChunks() {
   }
 }
 
-void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
+void World::GenerateChunk(int delta_x, int delta_y, int delta_z) {
   int origin[] = {2 * (chunk_[0] + delta_x) * int(kGenerationRadius),
                   2 * (chunk_[1] + delta_y) * int(kGenerationRadius),
                   2 * (chunk_[2] + delta_z) * int(kGenerationRadius)};
@@ -64,7 +64,7 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
   }
 }
 
-void WorldMap::DeleteDistanceChunks(const vector<int>& chunk) {
+void World::DeleteDistanceChunks(const vector<int>& chunk) {
   size_t block_index = 0;
   while (block_index < blocks_.size()) {
     vector<int> block_chunk = GetChunk(blocks_[block_index].GetCenter());
@@ -77,7 +77,7 @@ void WorldMap::DeleteDistanceChunks(const vector<int>& chunk) {
   }
 }
 
-void WorldMap::LoadNextChunk(const vector<int>& chunk) {
+void World::LoadNextChunk(const vector<int>& chunk) {
   if (chunk[0] != chunk_[0]) {
     GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 0);
     GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, -1);
@@ -91,7 +91,7 @@ void WorldMap::LoadNextChunk(const vector<int>& chunk) {
   }
 }
 
-BlockTypes WorldMap::GetBlockAt(const vec3& transform) {
+BlockTypes World::GetBlockAt(const vec3& transform) {
   for (const Block& block : blocks_) {
     if (abs(block.GetCenter().x - transform.x) <= 0.5 &&
         abs(block.GetCenter().y - transform.y) <= 0.5 &&
@@ -102,7 +102,7 @@ BlockTypes WorldMap::GetBlockAt(const vec3& transform) {
   return BlockTypes::kNone;
 }
 
-BlockTypes WorldMap::GenerateBlockAt(const vec3& transform) {
+BlockTypes World::GenerateBlockAt(const vec3& transform) {
   float height =
       noise_.GetNoise(round(transform.x), round(transform.z)) * 5.0f - 3.0f;
   if (int(round(transform.y)) <= int(height)) {

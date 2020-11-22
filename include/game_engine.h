@@ -6,7 +6,7 @@
 #include "cinder/Camera.h"
 #include "cinder/gl/gl.h"
 #include "core/camera.h"
-#include "core/world_map.h"
+#include "core/world.h"
 
 namespace minecraft {
 
@@ -30,7 +30,7 @@ class MinecraftApp : public ci::app::App {
 
  private:
   Camera camera_;
-  WorldMap world_map_;
+  World world_map_;
 
   void MoveIfPossible(float delta_x, float delta_y);
   bool BlockExistsAt(float delta_x, float delta_y, float delta_z);
