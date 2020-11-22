@@ -14,6 +14,19 @@ using std::vector;
 
 namespace minecraft {
 
+const vec3 Block::kCubeVertices[8] = {
+    {-0.5, -0.5f, -0.5f}, {0.5f, -0.5f, -0.5f}, {0.5f, 0.5f, -0.5f},
+    {-0.5f, 0.5f, -0.5f}, {-0.5f, -0.5f, 0.5f}, {0.5f, -0.5f, 0.5f},
+    {0.5f, 0.5f, 0.5f},   {-0.5f, 0.5f, 0.5f}};
+
+const vec3 Block::kCubeFaces[6][4] = {
+    {kCubeVertices[3], kCubeVertices[2], kCubeVertices[6], kCubeVertices[7]},
+    {kCubeVertices[0], kCubeVertices[1], kCubeVertices[2], kCubeVertices[3]},
+    {kCubeVertices[7], kCubeVertices[6], kCubeVertices[5], kCubeVertices[4]},
+    {kCubeVertices[4], kCubeVertices[5], kCubeVertices[1], kCubeVertices[0]},
+    {kCubeVertices[5], kCubeVertices[6], kCubeVertices[2], kCubeVertices[1]},
+    {kCubeVertices[7], kCubeVertices[4], kCubeVertices[0], kCubeVertices[3]}};
+
 Block::Block(const BlockTypes& block_type, const vec3& center) {
   texture_ = Texture(block_type).GetTexture();
   block_type_ = block_type;
@@ -21,38 +34,21 @@ Block::Block(const BlockTypes& block_type, const vec3& center) {
 }
 
 void Block::SetUp() {
-  // https://mottosso.gitbooks.io/cinder/content/book/guide_to_meshes.html
-  // https://drewish.com/2014/08/23/using-cinder%27s-cameraortho-and-vbomesh-to-draw-cubes/
+  // https://mottosso.gitbooks.io/cinder/content/book/guide_to_meshes.htmlss
   mesh_ = TriMesh(TriMesh::Format().positions().texCoords(2));
-  vec2 texture_vertices[4] = {{0, 0}, {0.167f, 0}, {0.167f, 1}, {0, 1}};
-
-  vec3 vertices[8] = {{-0.5, -0.5f, -0.5f}, {0.5f, -0.5f, -0.5f},
-                      {0.5f, 0.5f, -0.5f},  {-0.5f, 0.5f, -0.5f},
-                      {-0.5f, -0.5f, 0.5f}, {0.5f, -0.5f, 0.5f},
-                      {0.5f, 0.5f, 0.5f},   {-0.5f, 0.5f, 0.5f}};
-  for (vec3& vertex : vertices) {
-    vertex += center_;
-  }
-  vec3 faces[6][4] = {
-      {vertices[3], vertices[2], vertices[6], vertices[7]},  // TOP
-      {vertices[0], vertices[1], vertices[2], vertices[3]},
-      {vertices[7], vertices[6], vertices[5], vertices[4]},
-      {vertices[4], vertices[5], vertices[1], vertices[0]},
-      {vertices[5], vertices[6], vertices[2], vertices[1]},
-      {vertices[7], vertices[4], vertices[0], vertices[3]}};
-
-  size_t i = 0;
-  for (auto& face : faces) {
-    for (size_t vertex = 0; vertex < 4; vertex++) {
-      mesh_.appendPosition(face[vertex]);
-      mesh_.appendTexCoord(texture_vertices[vertex] + vec2(i * 0.167f, 0));
+  vec2 texture_vertices[kSquareVerticesCount] = {
+      {0, 0}, {1.0f / kCubeFacesCount, 0}, {1.0f / kCubeFacesCount, 1}, {0, 1}};
+  for (size_t face = 0; face < kCubeFacesCount; ++face) {
+    for (size_t vertex = 0; vertex < kSquareVerticesCount; ++vertex) {
+      mesh_.appendPosition(kCubeFaces[face][vertex] + center_);
+      vec2 face_texture_delta(face * 1.0f / kCubeFacesCount, 0);
+      mesh_.appendTexCoord(texture_vertices[vertex] + face_texture_delta);
     }
-    i++;
-    size_t numberVertices = mesh_.getNumVertices();
-    mesh_.appendTriangle(numberVertices - 4, numberVertices - 3,
-                         numberVertices - 2);
-    mesh_.appendTriangle(numberVertices - 4, numberVertices - 2,
-                         numberVertices - 1);
+    size_t vertices_count = mesh_.getNumVertices();
+    mesh_.appendTriangle(vertices_count - 4, vertices_count - 3,
+                         vertices_count - 2);
+    mesh_.appendTriangle(vertices_count - 4, vertices_count - 2,
+                         vertices_count - 1);
   }
 }
 

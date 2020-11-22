@@ -10,6 +10,12 @@
 namespace minecraft {
 
 class Block {
+  static const size_t kSquareVerticesCount = 4;
+  static const size_t kCubeVerticesCount = 8;
+  static const size_t kCubeFacesCount = 6;
+  static const ci::vec3 kCubeVertices[kCubeVerticesCount];
+  static const ci::vec3 kCubeFaces[kCubeFacesCount][kSquareVerticesCount];
+
  public:
   Block(const BlockTypes& b, const ci::vec3& center);
   void SetUp();
