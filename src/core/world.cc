@@ -11,13 +11,12 @@ using std::vector;
 namespace minecraft {
 
 World::World() {
+  noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
   chunk_ = {0, 0, 0};
   GenerateAdjacentChunks();
-  noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
 }
 
-void World::Render(const vec3& player_transform,
-                      const vec3& camera_forward) {
+void World::Render(const vec3& player_transform, const vec3& camera_forward) {
   vector<int> chunk = GetChunk(player_transform);
   if (chunk_[0] != chunk[0] || chunk_[1] != chunk[1] || chunk_[2] != chunk[2]) {
     DeleteDistanceChunks(chunk);
@@ -39,7 +38,6 @@ vector<int> World::GetChunk(const vec3& point) {
 }
 
 void World::GenerateAdjacentChunks() {
-  blocks_.clear();
   for (int x = -1; x < 2; ++x) {
     for (int z = -1; z < 2; ++z) {
       GenerateChunk(x, 0, z);
