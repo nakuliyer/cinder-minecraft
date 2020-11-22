@@ -50,23 +50,23 @@ void WorldMap::Render(const vec3& player_transform,
   }
 }
 
-bool WorldMap::IsOnLand(const vec3& transform) {
-  for (const Block& block : blocks_) {
-    if (abs(transform.x - block.GetCenter().x) <= 0.5 &&
-        abs(transform.z - block.GetCenter().z) <= 0.5 &&
-        transform.y - block.GetCenter().y >
-            0.5 + kPlayerHeight - kLandingRoom &&
-        transform.y - block.GetCenter().y < 0.5 + kPlayerHeight) {
-      return true;
-    }
-  }
-  return false;
-}
+// bool WorldMap::IsOnLand(const vec3& transform) {
+//  for (const Block& block : blocks_) {
+//    if (abs(transform.x - block.GetCenter().x) <= 0.5 &&
+//        abs(transform.z - block.GetCenter().z) <= 0.5 &&
+//        transform.y - block.GetCenter().y >
+//            0.5 + kPlayerHeight - kLandingRoom &&
+//        transform.y - block.GetCenter().y < 0.5 + kPlayerHeight) {
+//      return true;
+//    }
+//  }
+//  return false;
+//}
 
 vector<int> WorldMap::GetChunk(const vec3& point) {
-  return vector<int>{int(point.x / kGenerationRadius),
-                     int(point.y / kGenerationRadius),
-                     int(point.z / kGenerationRadius)};
+  return vector<int>{int(point.x / (2 * kGenerationRadius)),
+                     int(point.y / (2 * kGenerationRadius)),
+                     int(point.z / (2 * kGenerationRadius))};
 }
 
 void WorldMap::GenerateAdjacentChunks() {
@@ -79,14 +79,14 @@ void WorldMap::GenerateAdjacentChunks() {
 }
 
 void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
-  int origin[] = {(chunk_[0] + delta_x) * int(kGenerationRadius),
-                  (chunk_[1] + delta_y) * int(kGenerationRadius),
-                  (chunk_[2] + delta_z) * int(kGenerationRadius)};
-  int half_width = int(kGenerationRadius / 2);
+  int origin[] = {2 * (chunk_[0] + delta_x) * int(kGenerationRadius),
+                  2 * (chunk_[1] + delta_y) * int(kGenerationRadius),
+                  2 * (chunk_[2] + delta_z) * int(kGenerationRadius)};
+  int half_width = int(kGenerationRadius);
   for (int x = origin[0] - half_width; x < origin[0] + half_width; x++) {
     for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
       for (int z = origin[2] - half_width; z < origin[2] + half_width; ++z) {
-        BlockTypes block_type = GetBlockAt(vec3(x, y, z));
+        BlockTypes block_type = GenerateBlockAt(vec3(x, y, z));
         if (block_type != BlockTypes::kNone) {
           blocks_.emplace_back(block_type, vec3(x, y, z));
           blocks_.back().SetUp();
@@ -97,8 +97,20 @@ void WorldMap::GenerateChunk(int delta_x, int delta_y, int delta_z) {
 }
 
 BlockTypes WorldMap::GetBlockAt(const vec3& transform) {
-  int height = int(noise_.GetNoise(transform.x, transform.z) * 5);
-  if (int(transform.y) <= height - 3) {
+  for (const Block& block : blocks_) {
+    if (abs(block.GetCenter().x - transform.x) <= 0.5 &&
+        abs(block.GetCenter().y - transform.y) <= 0.5 &&
+        abs(block.GetCenter().z - transform.z) <= 0.5) {
+      return block.GetType();
+    }
+  }
+  return BlockTypes::kNone;
+}
+
+BlockTypes WorldMap::GenerateBlockAt(const vec3& transform) {
+  int height =
+      int(noise_.GetNoise(round(transform.x), round(transform.z)) * 5.0f);
+  if (int(round(transform.y)) <= int(height - 3)) {
     return BlockTypes::kGrass;
   }
   return BlockTypes::kNone;

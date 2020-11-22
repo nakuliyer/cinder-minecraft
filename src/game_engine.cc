@@ -33,34 +33,34 @@ void MinecraftApp::update() {
   if (IsBoundedBy(mouse_point, 0, kWindowSize, 0, kWindowSize)) {
     PanScreen(mouse_point);
   }
-  if (!world_map_.IsOnLand(camera_.GetTransform())) {
-    camera_.ApplyYForce(-kGravityForce);
-  } else {
+  if (BlockExistsAt(0, -kPlayerHeight, 0)) {
     camera_.ApplyNormalForce();
+  } else {
+    camera_.ApplyYForce(-kGravityForce);
   }
 }
 
 void MinecraftApp::keyDown(KeyEvent e) {
-  vec3 unit_sphere_directions = camera_.GetForwardVector();
+  vec3 forward = camera_.GetForwardVector();
   switch (e.getCode()) {
     case KeyEvent::KEY_w:
-      camera_.TransformX(kMovementDistance * unit_sphere_directions.x);
-      camera_.TransformZ(kMovementDistance * unit_sphere_directions.z);
+      MoveIfPossible(kMovementDistance * forward.x,
+                     kMovementDistance * forward.z);
       break;
     case KeyEvent::KEY_d:
-      camera_.TransformX(-kMovementDistance * unit_sphere_directions.z);
-      camera_.TransformZ(kMovementDistance * unit_sphere_directions.x);
+      MoveIfPossible(-kMovementDistance * forward.z,
+                     kMovementDistance * forward.x);
       break;
     case KeyEvent::KEY_s:
-      camera_.TransformX(-kMovementDistance * unit_sphere_directions.x);
-      camera_.TransformZ(-kMovementDistance * unit_sphere_directions.z);
+      MoveIfPossible(-kMovementDistance * forward.x,
+                     -kMovementDistance * forward.z);
       break;
     case KeyEvent::KEY_a:
-      camera_.TransformX(kMovementDistance * unit_sphere_directions.z);
-      camera_.TransformZ(-kMovementDistance * unit_sphere_directions.x);
+      MoveIfPossible(kMovementDistance * forward.z,
+                     -kMovementDistance * forward.x);
       break;
     case KeyEvent::KEY_SPACE:
-      if (world_map_.IsOnLand(camera_.GetTransform())) {
+      if (BlockExistsAt(0, -kPlayerHeight, 0)) {
         camera_.ApplyYForce(kJumpForce);
       }
       break;
@@ -71,6 +71,21 @@ void MinecraftApp::keyDown(KeyEvent e) {
 
 void MinecraftApp::mouseMove(MouseEvent e) {
   // TODO: this is where clicks are handled
+}
+
+void MinecraftApp::MoveIfPossible(float delta_x, float delta_z) {
+  for (int delta_y = 0; delta_y < int(round(kPlayerHeight)); ++delta_y) {
+    if (BlockExistsAt(delta_x, -float(delta_y), delta_z)) {
+      return;
+    }
+  }
+  camera_.TransformX(delta_x);
+  camera_.TransformZ(delta_z);
+}
+
+bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
+  vec3 location = camera_.GetTransform() + vec3(delta_x, delta_y, delta_z);
+  return world_map_.GetBlockAt(location) != BlockTypes::kNone;
 }
 
 void MinecraftApp::PanScreen(const ci::vec2& mouse_point) {

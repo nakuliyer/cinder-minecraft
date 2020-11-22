@@ -19,6 +19,10 @@ class Block {
   void SetUp();
   void Render() const;
 
+  BlockTypes GetType() const {
+    return block_type_;
+  }
+
   ci::vec3 GetCenter() const {
     return center_;
   };

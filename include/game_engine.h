@@ -20,6 +20,8 @@ static const float kJumpForce = 0.4f;       // velocity upwards on jump
 static const float kGravityForce = 0.05f;   // acceleration downwards
 static const float kRotationSpeed = 0.05f;  // in radians
 
+static const float kPlayerHeight = 1.9f;
+
 class MinecraftApp : public ci::app::App {
  public:
   MinecraftApp();
@@ -31,6 +33,9 @@ class MinecraftApp : public ci::app::App {
  private:
   Camera camera_;
   WorldMap world_map_;
+
+  void MoveIfPossible(float delta_x, float delta_y);
+  bool BlockExistsAt(float delta_x, float delta_y, float delta_z);
 
   void PanScreen(const ci::vec2& mouse_point);
 
