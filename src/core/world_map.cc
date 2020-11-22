@@ -69,7 +69,7 @@ void WorldMap::DeleteDistanceChunks(const vector<int>& chunk) {
   size_t block_index = 0;
   while (block_index < blocks_.size()) {
     vector<int> block_chunk = GetChunk(blocks_[block_index].GetCenter());
-    if (abs(block_chunk[0] - chunk[0]) > 1 ||
+    if (abs(block_chunk[0] - chunk[0]) > 1 &&
         abs(block_chunk[2] - chunk[2]) > 1) {
       blocks_.erase(blocks_.begin() + block_index);
     } else {
