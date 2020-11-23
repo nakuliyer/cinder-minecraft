@@ -11,6 +11,7 @@
 
 namespace minecraft {
 
+/// TODO: move all these inside the class
 static const float kWindowSize = 575.0f;
 static const float kCentralPartition = 0.5f;
 
@@ -22,6 +23,10 @@ static const float kRotationSpeed = 0.05f;  // in radians
 static const float kPlayerHeight = 1.9f;
 
 class MinecraftApp : public ci::app::App {
+  static const ci::vec2 kCoordinatesTextTopLeft;
+  static const ci::Color kCoordinatesTextColor;
+  static const ci::Font kCoordinatesTextFont;
+  static const float kCoordinatesSpacing;
  public:
   MinecraftApp();
   void draw() override;

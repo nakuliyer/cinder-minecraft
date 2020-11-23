@@ -1,9 +1,11 @@
 #include "game_engine.h"
 
-#include "cinder/app/Window.h"
 #include "cinder/Utilities.h"
+#include "cinder/app/Window.h"
 
 using ci::CameraPersp;
+using ci::Color;
+using ci::Font;
 using ci::vec2;
 using ci::vec3;
 using ci::app::KeyEvent;
@@ -12,16 +14,22 @@ using ci::app::setWindowSize;
 using ci::app::Window;
 using ci::gl::clear;
 using ci::gl::drawCube;
-using ci::gl::drawStringCentered;
-using ci::gl::FboRef;
-using ci::gl::Fbo;
+using ci::gl::drawString;
 using ci::gl::enableDepthRead;
 using ci::gl::enableDepthWrite;
+using ci::gl::Fbo;
+using ci::gl::FboRef;
 using ci::gl::setMatrices;
 using ci::gl::setMatricesWindow;
 using minecraft::Camera;
+using std::to_string;
 
 namespace minecraft {
+
+const vec2 MinecraftApp::kCoordinatesTextTopLeft = vec2(10, 10);
+const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
+const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
+const float MinecraftApp::kCoordinatesSpacing = 20.0f;
 
 MinecraftApp::MinecraftApp() {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
@@ -92,7 +100,15 @@ bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
 }
 
 void MinecraftApp::DrawUI() {
-  drawStringCentered("x: ", vec2(100, 100), ci::Color(0, 255, 0));
+  drawString("x: " + to_string(int(camera_.GetTransform().x)),
+             kCoordinatesTextTopLeft, kCoordinatesTextColor,
+             kCoordinatesTextFont);
+  drawString("y: " + to_string(int(camera_.GetTransform().y)),
+             kCoordinatesTextTopLeft + vec2(0, kCoordinatesSpacing),
+             kCoordinatesTextColor, kCoordinatesTextFont);
+  drawString("z: " + to_string(int(camera_.GetTransform().z)),
+             kCoordinatesTextTopLeft + vec2(0, 2 * kCoordinatesSpacing),
+             kCoordinatesTextColor, kCoordinatesTextFont);
 }
 
 void MinecraftApp::PanScreen(const ci::vec2& mouse_point) {
