@@ -1,6 +1,7 @@
 #include "game_engine.h"
 
 #include "cinder/app/Window.h"
+#include "cinder/Utilities.h"
 
 using ci::CameraPersp;
 using ci::vec2;
@@ -11,9 +12,13 @@ using ci::app::setWindowSize;
 using ci::app::Window;
 using ci::gl::clear;
 using ci::gl::drawCube;
+using ci::gl::drawStringCentered;
+using ci::gl::FboRef;
+using ci::gl::Fbo;
 using ci::gl::enableDepthRead;
 using ci::gl::enableDepthWrite;
 using ci::gl::setMatrices;
+using ci::gl::setMatricesWindow;
 using minecraft::Camera;
 
 namespace minecraft {
@@ -24,6 +29,8 @@ MinecraftApp::MinecraftApp() {
 
 void MinecraftApp::draw() {
   clear();
+  setMatricesWindow(getWindowSize());
+  DrawUI();
   camera_.Render();
   world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector());
 }
@@ -82,6 +89,10 @@ void MinecraftApp::MoveIfPossible(float delta_x, float delta_z) {
 bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
   vec3 location = camera_.GetTransform() + vec3(delta_x, delta_y, delta_z);
   return world_map_.GetBlockAt(location) != BlockTypes::kNone;
+}
+
+void MinecraftApp::DrawUI() {
+  drawStringCentered("x: ", vec2(100, 100), ci::Color(0, 255, 0));
 }
 
 void MinecraftApp::PanScreen(const ci::vec2& mouse_point) {

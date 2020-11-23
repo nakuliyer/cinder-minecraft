@@ -7,6 +7,7 @@
 #include "cinder/gl/gl.h"
 #include "core/camera.h"
 #include "core/world.h"
+#include "cinder/gl/Fbo.h"
 
 namespace minecraft {
 
@@ -32,11 +33,10 @@ class MinecraftApp : public ci::app::App {
   Camera camera_;
   World world_map_;
 
+  void DrawUI();
   void MoveIfPossible(float delta_x, float delta_y);
   bool BlockExistsAt(float delta_x, float delta_y, float delta_z);
-
   void PanScreen(const ci::vec2& mouse_point);
-
   static bool IsBoundedBy(const ci::vec2& point, float x_min, float x_max,
                           float y_min, float y_max);
 };
