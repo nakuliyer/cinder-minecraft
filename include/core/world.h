@@ -17,6 +17,12 @@ class World {
   static const size_t kGenerationRadius = 3;
   /// maximum distance from camera allowed to render a block
   static const size_t kRenderRadius = 15;
+  /// importance of angle difference on the closeness score between player and
+  /// block
+  static const float kClosenessAngleCoefficient;
+  /// importance of position difference on the closeness score between player
+  /// and block
+  static const float kClosenessPositionCoefficient;
 
  public:
   /// initializes the Perlin noise and generates chunks adjacent to the player
@@ -64,12 +70,6 @@ class World {
   /// \return a block type, or `kNone`
   BlockTypes GenerateBlockAt(const ci::vec3& transform);
 
-  /// returns the chunk that a point is in
-  ///
-  /// \param point a point
-  /// \return a chunk
-  static std::vector<int> GetChunk(const ci::vec3& point);
-
   /// initialization step, generates all chunks near the player at the start of
   /// game
   void GenerateAdjacentChunks();
@@ -80,6 +80,17 @@ class World {
   /// \param delta_y distance in chunk-distance
   /// \param delta_z distance in chunk-distance
   void GenerateChunk(int delta_x, int delta_y, int delta_z);
+
+  ci::vec3 FindBlockPointedAt(const ci::vec3& player_transform,
+                              const ci::vec3& camera_forward) const;
+
+  /// returns the chunk that a point is in
+  ///
+  /// \param point a point
+  /// \return a chunk
+  static std::vector<int> GetChunk(const ci::vec3& point);
+
+  static float ComputeClosenessScore(float delta_angle, float delta_position);
 };
 
 }  // namespace minecraft
