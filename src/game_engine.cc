@@ -75,6 +75,9 @@ void MinecraftApp::keyDown(KeyEvent e) {
         camera_.ApplyYForce(kJumpForce);
       }
       break;
+    case KeyEvent::KEY_q:
+      std::cout << "destroying a block" << std::endl;
+      break;
     default:
       break;
   }
