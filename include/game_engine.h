@@ -37,7 +37,7 @@ class MinecraftApp : public ci::app::App {
  private:
   Camera camera_;
   World world_map_;
-  int closest_block_index_;
+  int closest_block_index_{}{};
 
   void DrawUI();
   void MoveIfPossible(float delta_x, float delta_y);

@@ -20,18 +20,25 @@ World::World() {
 }
 
 void World::Render(const vec3& player_transform, const vec3& camera_forward) {
-  vector<int> chunk = GetChunk(player_transform);
-  if (chunk_[0] != chunk[0] || chunk_[1] != chunk[1] || chunk_[2] != chunk[2]) {
-    DeleteDistanceChunks(chunk);
-    LoadNextChunk(chunk);
-    chunk_ = {chunk[0], chunk[1], chunk[2]};
-  }
   for (const Block& block : blocks_) {
     if (distance(player_transform, block.GetCenter()) <= kRenderRadius &&
         dot(block.GetCenter() - player_transform, camera_forward) > 0) {
       block.Render();
     }
   }
+}
+
+bool World::HasMovedChunks(const vec3& player_transform) const {
+  vector<int> chunk = GetChunk(player_transform);
+  return chunk_[0] != chunk[0] || chunk_[1] != chunk[1] ||
+         chunk_[2] != chunk[2];
+}
+
+void World::MoveToChunk(const vec3& player_transform) {
+  vector<int> chunk = GetChunk(player_transform);
+  DeleteDistanceChunks(chunk);
+  LoadNextChunk(chunk);
+  chunk_ = {chunk[0], chunk[1], chunk[2]};
 }
 
 vector<int> World::GetChunk(const vec3& point) {

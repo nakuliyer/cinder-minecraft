@@ -34,6 +34,7 @@ const float MinecraftApp::kCoordinatesSpacing = 20.0f;
 
 MinecraftApp::MinecraftApp() {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
+  closest_block_index_ = -1;
 }
 
 void MinecraftApp::draw() {
@@ -57,6 +58,9 @@ void MinecraftApp::update() {
     camera_.ApplyNormalForce();
   } else {
     camera_.ApplyYForce(-kGravityForce);
+  }
+  if (world_map_.HasMovedChunks(camera_.GetTransform())) {
+    world_map_.MoveToChunk(camera_.GetTransform());
   }
 }
 

@@ -50,6 +50,9 @@ class World {
                               const ci::vec3& camera_forward);
   Block GetBlockAtIndex(size_t i) const;
 
+  bool HasMovedChunks(const ci::vec3& player_transform) const;
+  void MoveToChunk(const ci::vec3& player_transform);
+
  private:
   /// current chunk
   std::vector<int> chunk_;
@@ -86,16 +89,13 @@ class World {
   /// \param delta_z distance in chunk-distance
   void GenerateChunk(int delta_x, int delta_y, int delta_z);
 
-  ci::vec3 FindBlockPointedAt(const ci::vec3& player_transform,
-                              const ci::vec3& camera_forward);
+  static float ComputeClosenessScore(float delta_angle, float delta_position);
 
   /// returns the chunk that a point is in
   ///
   /// \param point a point
   /// \return a chunk
   static std::vector<int> GetChunk(const ci::vec3& point);
-
-  static float ComputeClosenessScore(float delta_angle, float delta_position);
 };
 
 }  // namespace minecraft
