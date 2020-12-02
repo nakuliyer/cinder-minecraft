@@ -45,6 +45,11 @@ class World {
   /// \return block type
   BlockTypes GetBlockAt(const ci::vec3& transform);
 
+  void DeleteBlockAtIndex(size_t i);
+  size_t GetClosestBlockIndex(const ci::vec3& player_transform,
+                              const ci::vec3& camera_forward);
+  Block GetBlockAtIndex(size_t i) const;
+
  private:
   /// current chunk
   std::vector<int> chunk_;
@@ -82,7 +87,7 @@ class World {
   void GenerateChunk(int delta_x, int delta_y, int delta_z);
 
   ci::vec3 FindBlockPointedAt(const ci::vec3& player_transform,
-                              const ci::vec3& camera_forward) const;
+                              const ci::vec3& camera_forward);
 
   /// returns the chunk that a point is in
   ///

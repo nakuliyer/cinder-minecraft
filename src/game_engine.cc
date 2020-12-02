@@ -15,6 +15,7 @@ using ci::app::Window;
 using ci::gl::clear;
 using ci::gl::drawCube;
 using ci::gl::drawString;
+using ci::gl::drawStrokedCube;
 using ci::gl::enableDepthRead;
 using ci::gl::enableDepthWrite;
 using ci::gl::Fbo;
@@ -41,6 +42,10 @@ void MinecraftApp::draw() {
   DrawUI();
   camera_.Render();
   world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector());
+  size_t closest_index = world_map_.GetClosestBlockIndex(
+      camera_.GetTransform(), camera_.GetForwardVector());
+  drawStrokedCube(world_map_.GetBlockAtIndex(closest_index).GetCenter(),
+                  vec3(1, 1, 1));
 }
 
 void MinecraftApp::update() {

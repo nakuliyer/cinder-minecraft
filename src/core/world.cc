@@ -2,7 +2,6 @@
 
 using ci::vec3;
 using ci::gl::drawCube;
-using ci::gl::drawStrokedCube;
 using glm::distance;
 using glm::dot;
 using glm::length;
@@ -33,8 +32,6 @@ void World::Render(const vec3& player_transform, const vec3& camera_forward) {
       block.Render();
     }
   }
-  drawStrokedCube(FindBlockPointedAt(player_transform, camera_forward),
-                  vec3(1, 1, 1));
 }
 
 vector<int> World::GetChunk(const vec3& point) {
@@ -115,10 +112,11 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
   return BlockTypes::kNone;
 }
 
-vec3 World::FindBlockPointedAt(const vec3& player_transform,
-                               const vec3& camera_forward) const {
+size_t World::GetClosestBlockIndex(const vec3& player_transform,
+                                   const vec3& camera_forward) {
   float min_closeness = FLT_MAX;
-  vec3 closest_center;
+  size_t closest_block_index = 0;
+  size_t index = 0;
   for (const Block& block : blocks_) {
     vec3 block_vector = block.GetCenter() - player_transform;
     float distance = length(block_vector);
@@ -126,10 +124,15 @@ vec3 World::FindBlockPointedAt(const vec3& player_transform,
     float closeness = ComputeClosenessScore(delta_angle, distance);
     if (closeness < min_closeness) {
       min_closeness = closeness;
-      closest_center = block.GetCenter();
+      closest_block_index = index;
     }
+    ++index;
   }
-  return closest_center;
+  return closest_block_index;
+}
+
+Block World::GetBlockAtIndex(size_t i) const {
+  return blocks_.at(i);
 }
 
 float World::ComputeClosenessScore(float delta_angle, float delta_position) {
