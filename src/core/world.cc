@@ -1,11 +1,17 @@
 #include "core/world.h"
 
+#include <random>
+
+using ci::vec2;
 using ci::vec3;
 using ci::gl::drawCube;
 using glm::distance;
 using glm::dot;
 using glm::length;
 using std::abs;
+using std::mt19937;
+using std::random_device;
+using std::uniform_int_distribution;
 using std::vector;
 
 namespace minecraft {
@@ -14,6 +20,11 @@ const float World::kClosenessAngleCoefficient = 40.0f;
 const float World::kClosenessPositionCoefficient = 1.0f;
 
 World::World() {
+  random_device rd;
+  mt19937 mt(rd());
+  uniform_int_distribution<int> dist(INT_MIN, INT_MAX);
+  int seed = dist(mt);
+  noise_ = FastNoiseLite(seed);
   noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
   chunk_ = {0, 0, 0};
   GenerateAdjacentChunks();
@@ -111,9 +122,8 @@ BlockTypes World::GetBlockAt(const vec3& transform) {
 }
 
 BlockTypes World::GenerateBlockAt(const vec3& transform) {
-  float height =
-      noise_.GetNoise(round(transform.x), round(transform.z)) * 5.0f - 3.0f;
-  if (int(round(transform.y)) <= int(height)) {
+  float height = noise_.GetNoise(round(transform.x), round(transform.z));
+  if (int(round(transform.y)) <= int(height * 5.0f - 3.0f)) {
     return BlockTypes::kGrass;
   }
   return BlockTypes::kNone;
