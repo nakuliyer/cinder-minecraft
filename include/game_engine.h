@@ -32,12 +32,11 @@ class MinecraftApp : public ci::app::App {
   void draw() override;
   void update() override;
   void keyDown(ci::app::KeyEvent e) override;
-  void mouseMove(ci::app::MouseEvent e) override;
 
  private:
   Camera camera_;
   World world_map_;
-  int closest_block_index_{}{};
+  int closest_block_index_;
 
   void DrawUI();
   void MoveIfPossible(float delta_x, float delta_y);

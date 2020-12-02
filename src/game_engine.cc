@@ -95,10 +95,6 @@ void MinecraftApp::keyDown(KeyEvent e) {
   }
 }
 
-void MinecraftApp::mouseMove(MouseEvent e) {
-  // TODO: this is where clicks are handled
-}
-
 void MinecraftApp::MoveIfPossible(float delta_x, float delta_z) {
   for (int delta_y = 0; delta_y < int(round(kPlayerHeight)); ++delta_y) {
     if (BlockExistsAt(delta_x, -float(delta_y), delta_z)) {

@@ -11,7 +11,7 @@ using std::vector;
 namespace minecraft {
 
 const float World::kClosenessAngleCoefficient = 40.0f;
-const float World::kClosenessPositionCoefficient = 5.0f;
+const float World::kClosenessPositionCoefficient = 1.0f;
 
 World::World() {
   noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
