@@ -135,6 +135,10 @@ Block World::GetBlockAtIndex(size_t i) const {
   return blocks_.at(i);
 }
 
+void World::DeleteBlockAtIndex(size_t i) {
+  blocks_.erase(blocks_.begin() + i);
+}
+
 float World::ComputeClosenessScore(float delta_angle, float delta_position) {
   return kClosenessAngleCoefficient * delta_angle +
          kClosenessPositionCoefficient * delta_position;
