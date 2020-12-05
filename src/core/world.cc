@@ -46,6 +46,11 @@ bool World::IsWithinRenderDistance(const Block& block, const vec3& origin,
          GetAngle(block.GetCenter() - origin, forward) <= field_of_view_angle;
 }
 
+bool World::HasMovedChunks(const vector<int>& old_chunk,
+                           const vec3& new_position) const {
+  return old_chunk != GetChunk(new_position);
+}
+
 void World::MoveToChunk(const vector<int>& old_chunk,
                         const vector<int>& new_chunk) {
   DeleteDistanceChunks(new_chunk);

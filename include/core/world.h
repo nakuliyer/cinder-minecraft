@@ -52,7 +52,9 @@ class World {
   void DeleteClosestBlock(const ci::vec3& player_transform,
                           const ci::vec3& camera_forward);
 
-  bool HasMovedChunks(const ci::vec3& player_transform) const;
+  bool HasMovedChunks(const std::vector<int>& old_chunk,
+                      const ci::vec3& new_position) const;
+
   void MoveToChunk(const std::vector<int>& old_chunk,
                    const std::vector<int>& new_chunk);
 

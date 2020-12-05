@@ -63,8 +63,7 @@ void MinecraftApp::update() {
   } else {
     camera_.ApplyYForce(-kGravityForce);
   }
-  vector<int> new_chunk = world_map_.GetChunk(camera_.GetTransform());
-  if (current_chunk_ != new_chunk) {
+  if (world_map_.HasMovedChunks(current_chunk_, camera_.GetTransform())) {
     world_map_.MoveToChunk(current_chunk_, new_chunk);
     current_chunk_ = new_chunk;
   }
