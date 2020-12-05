@@ -31,11 +31,10 @@ World::World(size_t chunk_radius, size_t render_radius)
   GenerateAdjacentChunks();
 }
 
-void World::Render(const vec3& player_transform, const vec3& camera_forward,
+void World::Render(const vec3& origin, const vec3& forward,
                    float field_of_view_angle) {
   for (const Block& block : blocks_) {
-    if (IsWithinRenderDistance(block, player_transform, camera_forward,
-                               field_of_view_angle)) {
+    if (IsWithinRenderDistance(block, origin, forward, field_of_view_angle)) {
       block.Render();
     }
   }
@@ -44,12 +43,8 @@ void World::Render(const vec3& player_transform, const vec3& camera_forward,
 bool World::IsWithinRenderDistance(const Block& block, const vec3& origin,
                                    const vec3& forward,
                                    float field_of_view_angle) const {
-  std::cout << chunk_radius_;
-  vec3 displacement = block.GetCenter() - origin;
-  float angle =
-      acos(dot(displacement, forward) / length(displacement) * length(forward));
   return distance(origin, block.GetCenter()) <= render_radius_ &&
-         angle <= field_of_view_angle;
+         GetAngle(block.GetCenter() - origin, forward) <= field_of_view_angle;
 }
 
 bool World::HasMovedChunks(const vec3& player_transform) const {
@@ -65,10 +60,10 @@ void World::MoveToChunk(const vec3& player_transform) {
   chunk_ = {chunk[0], chunk[1], chunk[2]};
 }
 
-vector<int> World::GetChunk(const vec3& point) {
-  return vector<int>{int(point.x / (2 * kGenerationRadius)),
-                     int(point.y / (2 * kGenerationRadius)),
-                     int(point.z / (2 * kGenerationRadius))};
+vector<int> World::GetChunk(const vec3& point) const {
+  return vector<int>{int(point.x / (2.0f * chunk_radius_)),
+                     int(point.y / (2.0f * chunk_radius_)),
+                     int(point.z / (2.0f * chunk_radius_))};
 }
 
 void World::GenerateAdjacentChunks() {
@@ -181,6 +176,10 @@ void World::DeleteClosestBlock(const vec3& player_transform,
 float World::ComputeClosenessScore(float delta_angle, float delta_position) {
   return kClosenessAngleCoefficient * delta_angle +
          kClosenessPositionCoefficient * delta_position;
+}
+
+float World::GetAngle(const vec3& first, const vec3& second) {
+  return acos(dot(first, second) / (length(first) * length(second)));
 }
 
 }  // namespace minecraft

@@ -35,7 +35,7 @@ class World {
   ///
   /// \param player_transform the player's location
   /// \param camera_forward the camera's forward vector
-  void Render(const ci::vec3& player_transform, const ci::vec3& camera_forward,
+  void Render(const ci::vec3& origin, const ci::vec3& forward,
               float field_of_view_angle);
 
   /// clips transform to the lattice block coordinate system and returns the
@@ -54,6 +54,12 @@ class World {
 
   bool HasMovedChunks(const ci::vec3& player_transform) const;
   void MoveToChunk(const ci::vec3& player_transform);
+
+  /// returns the chunk that a point is in
+  ///
+  /// \param point a point
+  /// \return a chunk
+  std::vector<int> GetChunk(const ci::vec3& point) const;
 
  private:
   size_t chunk_radius_;
@@ -103,11 +109,7 @@ class World {
 
   static float ComputeClosenessScore(float delta_angle, float delta_position);
 
-  /// returns the chunk that a point is in
-  ///
-  /// \param point a point
-  /// \return a chunk
-  static std::vector<int> GetChunk(const ci::vec3& point);
+  static float GetAngle(const ci::vec3& first, const ci::vec3& second);
 };
 
 }  // namespace minecraft

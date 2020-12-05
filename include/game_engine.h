@@ -2,6 +2,7 @@
 #define MINECRAFT_GAME_ENGINE_H
 
 #include <string>
+#include <vector>
 
 #include "cinder/Camera.h"
 #include "cinder/gl/gl.h"
@@ -40,6 +41,7 @@ class MinecraftApp : public ci::app::App {
  private:
   Camera camera_;
   World world_map_;
+  std::vector<int> current_chunk_;
 
   void DrawUI();
   void MoveIfPossible(float delta_x, float delta_y);
