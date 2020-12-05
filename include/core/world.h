@@ -14,7 +14,7 @@ namespace minecraft {
 /// cinder-compatible world
 class World {
   /// x, y, and z width of a chunk
-  static const size_t kGenerationRadius = 3;
+  static const size_t kGenerationRadius = 2;
   /// maximum distance from camera allowed to render a block
   static const size_t kRenderRadius = 15;
   /// importance of angle difference on the closeness score between player and
@@ -26,7 +26,7 @@ class World {
 
  public:
   /// initializes the Perlin noise and generates chunks adjacent to the player
-  World();
+  World(size_t chunk_radius, size_t render_radius);
 
   /// renders the blocks in the player's chunk and all adjacent chunks if they
   /// are within rendering distance and in front of the player's field of view.
@@ -35,7 +35,8 @@ class World {
   ///
   /// \param player_transform the player's location
   /// \param camera_forward the camera's forward vector
-  void Render(const ci::vec3& player_transform, const ci::vec3& camera_forward);
+  void Render(const ci::vec3& player_transform, const ci::vec3& camera_forward,
+              float field_of_view_angle);
 
   /// clips transform to the lattice block coordinate system and returns the
   /// block type at the transform from the current blocks array, or `kNone` if
@@ -44,11 +45,6 @@ class World {
   /// \param transform location
   /// \return block type
   BlockTypes GetBlockAt(const ci::vec3& transform);
-
-  void DeleteBlockAtIndex(size_t i);
-  size_t GetClosestBlockIndex(const ci::vec3& player_transform,
-                              const ci::vec3& camera_forward) const;
-  Block GetBlockAtIndex(size_t i) const;
 
   ci::vec3 GetClosestBlock(const ci::vec3& player_transform,
                            const ci::vec3& camera_forward) const;
@@ -60,6 +56,10 @@ class World {
   void MoveToChunk(const ci::vec3& player_transform);
 
  private:
+  size_t chunk_radius_;
+  size_t render_radius_;
+
+
   /// current chunk
   std::vector<int> chunk_;
   /// current set of blocks in the current chunk and all adjacent chunks
@@ -94,6 +94,9 @@ class World {
   /// \param delta_y distance in chunk-distance
   /// \param delta_z distance in chunk-distance
   void GenerateChunk(int delta_x, int delta_y, int delta_z);
+
+  size_t GetClosestBlockIndex(const ci::vec3& player_transform,
+                              const ci::vec3& camera_forward) const;
 
   static float ComputeClosenessScore(float delta_angle, float delta_position);
 

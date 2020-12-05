@@ -27,6 +27,10 @@ class MinecraftApp : public ci::app::App {
   static const ci::Color kCoordinatesTextColor;
   static const ci::Font kCoordinatesTextFont;
   static const float kCoordinatesSpacing;
+  static const float kFieldOfViewAngle;
+  static const size_t kChunkRadius;
+  static const size_t kRenderRadius;
+
  public:
   MinecraftApp();
   void draw() override;

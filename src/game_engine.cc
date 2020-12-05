@@ -31,8 +31,11 @@ const vec2 MinecraftApp::kCoordinatesTextTopLeft = vec2(10, 10);
 const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
 const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
 const float MinecraftApp::kCoordinatesSpacing = 20.0f;
+const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
+const size_t MinecraftApp::kChunkRadius = 2;
+const size_t MinecraftApp::kRenderRadius = 15;
 
-MinecraftApp::MinecraftApp() {
+MinecraftApp::MinecraftApp() : world_map_(kChunkRadius, kRenderRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
 }
 
@@ -41,7 +44,8 @@ void MinecraftApp::draw() {
   setMatricesWindow(getWindowSize());
   DrawUI();
   camera_.Render();
-  world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector());
+  world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector(),
+                    kFieldOfViewAngle);
   drawStrokedCube(world_map_.GetClosestBlock(camera_.GetTransform(),
                                              camera_.GetForwardVector()),
                   vec3(1, 1, 1));
