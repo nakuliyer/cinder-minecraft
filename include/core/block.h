@@ -28,18 +28,10 @@ class Block {
   /// \param block_type the type of block
   /// \param center the center of this block
   Block(const BlockTypes& block_type, const ci::vec3& center);
-
   /// renders this block
   void Render() const;
-
-  /// getter
-  ///
   /// \return type of this block
-
   BlockTypes GetType() const;
-
-  /// getter
-  ///
   /// \return center of this block
   ci::vec3 GetCenter() const;
 

@@ -34,11 +34,22 @@ World::World(size_t chunk_radius, size_t render_radius)
 void World::Render(const vec3& player_transform, const vec3& camera_forward,
                    float field_of_view_angle) {
   for (const Block& block : blocks_) {
-    if (distance(player_transform, block.GetCenter()) <= kRenderRadius &&
-        dot(block.GetCenter() - player_transform, camera_forward) > 0) {
+    if (IsWithinRenderDistance(block, player_transform, camera_forward,
+                               field_of_view_angle)) {
       block.Render();
     }
   }
+}
+
+bool World::IsWithinRenderDistance(const Block& block, const vec3& origin,
+                                   const vec3& forward,
+                                   float field_of_view_angle) const {
+  std::cout << chunk_radius_;
+  vec3 displacement = block.GetCenter() - origin;
+  float angle =
+      acos(dot(displacement, forward) / length(displacement) * length(forward));
+  return distance(origin, block.GetCenter()) <= render_radius_ &&
+         angle <= field_of_view_angle;
 }
 
 bool World::HasMovedChunks(const vec3& player_transform) const {

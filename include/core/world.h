@@ -14,7 +14,7 @@ namespace minecraft {
 /// cinder-compatible world
 class World {
   /// x, y, and z width of a chunk
-  static const size_t kGenerationRadius = 2;
+  static const size_t kGenerationRadius = 3;
   /// maximum distance from camera allowed to render a block
   static const size_t kRenderRadius = 15;
   /// importance of angle difference on the closeness score between player and
@@ -59,6 +59,9 @@ class World {
   size_t chunk_radius_;
   size_t render_radius_;
 
+  bool IsWithinRenderDistance(const Block& block, const ci::vec3& origin,
+                              const ci::vec3& forward,
+                              float field_of_view_angle) const;
 
   /// current chunk
   std::vector<int> chunk_;

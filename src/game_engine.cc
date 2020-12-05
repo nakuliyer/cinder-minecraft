@@ -32,7 +32,7 @@ const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
 const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
 const float MinecraftApp::kCoordinatesSpacing = 20.0f;
 const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
-const size_t MinecraftApp::kChunkRadius = 2;
+const size_t MinecraftApp::kChunkRadius = 3;
 const size_t MinecraftApp::kRenderRadius = 15;
 
 MinecraftApp::MinecraftApp() : world_map_(kChunkRadius, kRenderRadius) {
