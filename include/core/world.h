@@ -47,8 +47,14 @@ class World {
 
   void DeleteBlockAtIndex(size_t i);
   size_t GetClosestBlockIndex(const ci::vec3& player_transform,
-                              const ci::vec3& camera_forward);
+                              const ci::vec3& camera_forward) const;
   Block GetBlockAtIndex(size_t i) const;
+
+  ci::vec3 GetClosestBlock(const ci::vec3& player_transform,
+                           const ci::vec3& camera_forward) const;
+
+  void DeleteClosestBlock(const ci::vec3& player_transform,
+                          const ci::vec3& camera_forward);
 
   bool HasMovedChunks(const ci::vec3& player_transform) const;
   void MoveToChunk(const ci::vec3& player_transform);

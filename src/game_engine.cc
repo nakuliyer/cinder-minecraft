@@ -34,7 +34,6 @@ const float MinecraftApp::kCoordinatesSpacing = 20.0f;
 
 MinecraftApp::MinecraftApp() {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
-  closest_block_index_ = -1;
 }
 
 void MinecraftApp::draw() {
@@ -43,9 +42,8 @@ void MinecraftApp::draw() {
   DrawUI();
   camera_.Render();
   world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector());
-  closest_block_index_ = world_map_.GetClosestBlockIndex(
-      camera_.GetTransform(), camera_.GetForwardVector());
-  drawStrokedCube(world_map_.GetBlockAtIndex(closest_block_index_).GetCenter(),
+  drawStrokedCube(world_map_.GetClosestBlock(camera_.GetTransform(),
+                                             camera_.GetForwardVector()),
                   vec3(1, 1, 1));
 }
 
@@ -85,10 +83,8 @@ void MinecraftApp::keyDown(KeyEvent e) {
       }
       break;
     case KeyEvent::KEY_q:
-      if (closest_block_index_ != -1) {
-        world_map_.DeleteBlockAtIndex(closest_block_index_);
-        closest_block_index_ = -1;
-      }
+      world_map_.DeleteClosestBlock(camera_.GetTransform(),
+                                    camera_.GetForwardVector());
       break;
     default:
       break;

@@ -130,7 +130,7 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
 }
 
 size_t World::GetClosestBlockIndex(const vec3& player_transform,
-                                   const vec3& camera_forward) {
+                                   const vec3& camera_forward) const {
   float min_closeness = FLT_MAX;
   size_t closest_block_index = 0;
   size_t index = 0;
@@ -154,6 +154,18 @@ Block World::GetBlockAtIndex(size_t i) const {
 
 void World::DeleteBlockAtIndex(size_t i) {
   blocks_.erase(blocks_.begin() + i);
+}
+
+vec3 World::GetClosestBlock(const vec3& player_transform,
+                            const vec3& camera_forward) const {
+  size_t closest_block = GetClosestBlockIndex(player_transform, camera_forward);
+  return blocks_.at(closest_block).GetCenter();
+}
+
+void World::DeleteClosestBlock(const vec3& player_transform,
+                               const vec3& camera_forward) {
+  size_t closest_block = GetClosestBlockIndex(player_transform, camera_forward);
+  blocks_.erase(blocks_.begin() + closest_block);
 }
 
 float World::ComputeClosenessScore(float delta_angle, float delta_position) {
