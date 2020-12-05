@@ -38,6 +38,7 @@ const size_t MinecraftApp::kRenderRadius = 15;
 
 MinecraftApp::MinecraftApp() : world_map_(kChunkRadius, kRenderRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
+  current_chunk_ = {0, 0, 0};
 }
 
 void MinecraftApp::draw() {
@@ -64,12 +65,8 @@ void MinecraftApp::update() {
   }
   vector<int> new_chunk = world_map_.GetChunk(camera_.GetTransform());
   if (current_chunk_ != new_chunk) {
-
-  }
-
-  if (world_map_.HasMovedChunks(camera_.GetTransform())) {
-    world_map_.MoveToChunk(camera_.GetTransform());
-//    current_chunk_ = camera_.GetTransform()
+    world_map_.MoveToChunk(current_chunk_, new_chunk);
+    current_chunk_ = new_chunk;
   }
 }
 

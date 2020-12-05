@@ -27,7 +27,6 @@ World::World(size_t chunk_radius, size_t render_radius)
   int seed = dist(mt);
   noise_ = FastNoiseLite(seed);
   noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-  chunk_ = {0, 0, 0};
   GenerateAdjacentChunks();
 }
 
@@ -47,17 +46,53 @@ bool World::IsWithinRenderDistance(const Block& block, const vec3& origin,
          GetAngle(block.GetCenter() - origin, forward) <= field_of_view_angle;
 }
 
-bool World::HasMovedChunks(const vec3& player_transform) const {
-  vector<int> chunk = GetChunk(player_transform);
-  return chunk_[0] != chunk[0] || chunk_[1] != chunk[1] ||
-         chunk_[2] != chunk[2];
+void World::MoveToChunk(const vector<int>& old_chunk,
+                        const vector<int>& new_chunk) {
+  DeleteDistanceChunks(new_chunk);
+  LoadNextChunks(old_chunk, new_chunk);
 }
 
-void World::MoveToChunk(const vec3& player_transform) {
-  vector<int> chunk = GetChunk(player_transform);
-  DeleteDistanceChunks(chunk);
-  LoadNextChunk(chunk);
-  chunk_ = {chunk[0], chunk[1], chunk[2]};
+void World::DeleteDistanceChunks(const vector<int>& new_chunk) {
+  size_t block_index = 0;
+  while (block_index < blocks_.size()) {
+    vector<int> block_chunk = GetChunk(blocks_[block_index].GetCenter());
+    if (abs(block_chunk[0] - new_chunk[0]) > 1 &&
+        abs(block_chunk[1] - new_chunk[1]) > 1 &&
+        abs(block_chunk[2] - new_chunk[2]) > 1) {
+      blocks_.erase(blocks_.begin() + block_index);
+    } else {
+      ++block_index;
+    }
+  }
+}
+
+void World::LoadNextChunks(const vector<int>& old_chunk,
+                           const vector<int>& new_chunk) {
+  if (old_chunk[0] != new_chunk[0]) {
+    int direction = new_chunk[0] - old_chunk[0];
+    for (int y = -1; y <= 1; ++y) {
+      for (int z = -1; z <= 1; ++z) {
+        GenerateChunk(vector<int>{new_chunk[0] + direction, new_chunk[1] + y,
+                                  new_chunk[2] + z});
+      }
+    }
+  } else if (old_chunk[1] != new_chunk[1]) {
+    int direction = new_chunk[1] - old_chunk[1];
+    for (int x = -1; x <= 1; ++x) {
+      for (int z = -1; z <= 1; ++z) {
+        GenerateChunk(vector<int>{new_chunk[0] + x, new_chunk[1] + direction,
+                                  new_chunk[2] + z});
+      }
+    }
+  } else if (old_chunk[2] != new_chunk[2]) {
+    int direction = new_chunk[2] - old_chunk[2];
+    for (int x = -1; x <= 1; ++x) {
+      for (int y = -1; y <= 1; ++y) {
+        GenerateChunk(vector<int>{new_chunk[0] + x, new_chunk[1] + y,
+                                  new_chunk[2] + direction});
+      }
+    }
+  }
 }
 
 vector<int> World::GetChunk(const vec3& point) const {
@@ -70,17 +105,17 @@ void World::GenerateAdjacentChunks() {
   for (int x = -1; x < 2; ++x) {
     for (int y = -1; y < 2; ++y) {
       for (int z = -1; z < 2; ++z) {
-        GenerateChunk(x, y, z);
+        GenerateChunk(vector<int>{x, y, z});
       }
     }
   }
 }
 
-void World::GenerateChunk(int delta_x, int delta_y, int delta_z) {
-  int origin[] = {2 * (chunk_[0] + delta_x) * int(kGenerationRadius),
-                  2 * (chunk_[1] + delta_y) * int(kGenerationRadius),
-                  2 * (chunk_[2] + delta_z) * int(kGenerationRadius)};
-  int half_width = int(kGenerationRadius);
+void World::GenerateChunk(vector<int> chunk) {
+  int origin[] = {2 * chunk[0] * int(chunk_radius_),
+                  2 * chunk[1] * int(chunk_radius_),
+                  2 * chunk[2] * int(chunk_radius_)};
+  int half_width = int(chunk_radius_);
   for (int x = origin[0] - half_width; x < origin[0] + half_width; x++) {
     for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
       for (int z = origin[2] - half_width; z < origin[2] + half_width; ++z) {
@@ -90,36 +125,6 @@ void World::GenerateChunk(int delta_x, int delta_y, int delta_z) {
         }
       }
     }
-  }
-}
-
-void World::DeleteDistanceChunks(const vector<int>& chunk) {
-  size_t block_index = 0;
-  while (block_index < blocks_.size()) {
-    vector<int> block_chunk = GetChunk(blocks_[block_index].GetCenter());
-    if (abs(block_chunk[0] - chunk[0]) > 1 &&
-        abs(block_chunk[1] - chunk[1]) > 1 &&
-        abs(block_chunk[2] - chunk[2]) > 1) {
-      blocks_.erase(blocks_.begin() + block_index);
-    } else {
-      ++block_index;
-    }
-  }
-}
-
-void World::LoadNextChunk(const vector<int>& chunk) {
-  if (chunk[0] != chunk_[0]) {
-    GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 0);
-    GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, -1);
-    GenerateChunk(2 * (chunk[0] - chunk_[0]), 0, 1);
-  } else if (chunk[1] != chunk_[1]) {
-    GenerateChunk(0, 2 * (chunk[1] - chunk_[1]), 0);
-    GenerateChunk(0, 2 * (chunk[1] - chunk_[1]), -1);
-    GenerateChunk(0, 2 * (chunk[1] - chunk_[1]), 1);
-  } else if (chunk[2] != chunk_[2]) {
-    GenerateChunk(0, 0, 2 * (chunk[2] - chunk_[2]));
-    GenerateChunk(-1, 0, 2 * (chunk[2] - chunk_[2]));
-    GenerateChunk(1, 0, 2 * (chunk[2] - chunk_[2]));
   }
 }
 

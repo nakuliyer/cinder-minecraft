@@ -53,7 +53,8 @@ class World {
                           const ci::vec3& camera_forward);
 
   bool HasMovedChunks(const ci::vec3& player_transform) const;
-  void MoveToChunk(const ci::vec3& player_transform);
+  void MoveToChunk(const std::vector<int>& old_chunk,
+                   const std::vector<int>& new_chunk);
 
   /// returns the chunk that a point is in
   ///
@@ -69,15 +70,13 @@ class World {
                               const ci::vec3& forward,
                               float field_of_view_angle) const;
 
-  /// current chunk
-  std::vector<int> chunk_;
   /// current set of blocks in the current chunk and all adjacent chunks
   std::vector<Block> blocks_;
   /// Perlin noise terrain generator
   FastNoiseLite noise_;
 
   /// deletes all blocks that are more than one chunk away
-  void DeleteDistanceChunks(const std::vector<int>& chunk);
+  void DeleteDistanceChunks(const std::vector<int>& new_chunk);
 
   /// pushes blocks to the blocks array that are adjacent to the passed chunk.
   /// i.e. if the player has passed between chunks in the x direction, loads the
@@ -85,7 +84,8 @@ class World {
   /// movement there
   ///
   /// \param chunk the players new chunk
-  void LoadNextChunk(const std::vector<int>& chunk);
+  void LoadNextChunks(const std::vector<int>& old_chunk,
+                      const std::vector<int>& new_chunk);
 
   /// generates the block at the specified transform
   ///
@@ -102,7 +102,7 @@ class World {
   /// \param delta_x distance in chunk-distance
   /// \param delta_y distance in chunk-distance
   /// \param delta_z distance in chunk-distance
-  void GenerateChunk(int delta_x, int delta_y, int delta_z);
+  void GenerateChunk(std::vector<int> chunk);
 
   size_t GetClosestBlockIndex(const ci::vec3& player_transform,
                               const ci::vec3& camera_forward) const;
