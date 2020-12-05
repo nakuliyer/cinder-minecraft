@@ -36,7 +36,9 @@ const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
 const size_t MinecraftApp::kChunkRadius = 3;
 const size_t MinecraftApp::kRenderRadius = 15;
 
-MinecraftApp::MinecraftApp() : world_map_(kChunkRadius, kRenderRadius) {
+// TODO: not always start at origin
+MinecraftApp::MinecraftApp()
+    : world_map_(vec3(0, 0, 0), kChunkRadius, kRenderRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
   current_chunk_ = {0, 0, 0};
 }
@@ -64,6 +66,7 @@ void MinecraftApp::update() {
     camera_.ApplyYForce(-kGravityForce);
   }
   if (world_map_.HasMovedChunks(current_chunk_, camera_.GetTransform())) {
+    vector<int> new_chunk = world_map_.GetChunk(camera_.GetTransform());
     world_map_.MoveToChunk(current_chunk_, new_chunk);
     current_chunk_ = new_chunk;
   }

@@ -26,7 +26,7 @@ class World {
 
  public:
   /// initializes the Perlin noise and generates chunks adjacent to the player
-  World(size_t chunk_radius, size_t render_radius);
+  World(const ci::vec3& origin_position, size_t chunk_radius, size_t render_radius);
 
   /// renders the blocks in the player's chunk and all adjacent chunks if they
   /// are within rendering distance and in front of the player's field of view.
@@ -97,14 +97,15 @@ class World {
 
   /// initialization step, generates all chunks near the player at the start of
   /// game
-  void GenerateAdjacentChunks();
+  void InitializeAdjacentChunks(const std::vector<int>& origin_chunk);
 
   /// generates a chunk a specified distance away from the player's chunk
   ///
   /// \param delta_x distance in chunk-distance
   /// \param delta_y distance in chunk-distance
   /// \param delta_z distance in chunk-distance
-  void GenerateChunk(std::vector<int> chunk);
+  void GenerateChunk(std::vector<int> old_chunk, int delta_x, int delta_y,
+                     int delta_z);
 
   size_t GetClosestBlockIndex(const ci::vec3& player_transform,
                               const ci::vec3& camera_forward) const;

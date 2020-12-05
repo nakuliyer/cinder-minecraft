@@ -19,7 +19,8 @@ namespace minecraft {
 const float World::kClosenessAngleCoefficient = 40.0f;
 const float World::kClosenessPositionCoefficient = 1.0f;
 
-World::World(size_t chunk_radius, size_t render_radius)
+World::World(const ci::vec3& origin_position, size_t chunk_radius,
+             size_t render_radius)
     : chunk_radius_(chunk_radius), render_radius_(render_radius) {
   random_device rd;
   mt19937 mt(rd());
@@ -27,7 +28,7 @@ World::World(size_t chunk_radius, size_t render_radius)
   int seed = dist(mt);
   noise_ = FastNoiseLite(seed);
   noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-  GenerateAdjacentChunks();
+  InitializeAdjacentChunks(GetChunk(origin_position));
 }
 
 void World::Render(const vec3& origin, const vec3& forward,
@@ -77,24 +78,21 @@ void World::LoadNextChunks(const vector<int>& old_chunk,
     int direction = new_chunk[0] - old_chunk[0];
     for (int y = -1; y <= 1; ++y) {
       for (int z = -1; z <= 1; ++z) {
-        GenerateChunk(vector<int>{new_chunk[0] + direction, new_chunk[1] + y,
-                                  new_chunk[2] + z});
+        GenerateChunk(new_chunk, direction, y, z);
       }
     }
   } else if (old_chunk[1] != new_chunk[1]) {
     int direction = new_chunk[1] - old_chunk[1];
     for (int x = -1; x <= 1; ++x) {
       for (int z = -1; z <= 1; ++z) {
-        GenerateChunk(vector<int>{new_chunk[0] + x, new_chunk[1] + direction,
-                                  new_chunk[2] + z});
+        GenerateChunk(new_chunk, x, direction, z);
       }
     }
   } else if (old_chunk[2] != new_chunk[2]) {
     int direction = new_chunk[2] - old_chunk[2];
     for (int x = -1; x <= 1; ++x) {
       for (int y = -1; y <= 1; ++y) {
-        GenerateChunk(vector<int>{new_chunk[0] + x, new_chunk[1] + y,
-                                  new_chunk[2] + direction});
+        GenerateChunk(new_chunk, x, y, direction);
       }
     }
   }
@@ -106,20 +104,21 @@ vector<int> World::GetChunk(const vec3& point) const {
                      int(point.z / (2.0f * chunk_radius_))};
 }
 
-void World::GenerateAdjacentChunks() {
+void World::InitializeAdjacentChunks(const vector<int>& origin_chunk) {
   for (int x = -1; x < 2; ++x) {
     for (int y = -1; y < 2; ++y) {
       for (int z = -1; z < 2; ++z) {
-        GenerateChunk(vector<int>{x, y, z});
+        GenerateChunk(origin_chunk, x, y, z);
       }
     }
   }
 }
 
-void World::GenerateChunk(vector<int> chunk) {
-  int origin[] = {2 * chunk[0] * int(chunk_radius_),
-                  2 * chunk[1] * int(chunk_radius_),
-                  2 * chunk[2] * int(chunk_radius_)};
+void World::GenerateChunk(vector<int> old_chunk, int delta_x, int delta_y,
+                          int delta_z) {
+  int origin[] = {2 * (old_chunk[0] + delta_x) * int(chunk_radius_),
+                  2 * (old_chunk[1] + delta_y) * int(chunk_radius_),
+                  2 * (old_chunk[2] + delta_z) * int(chunk_radius_)};
   int half_width = int(chunk_radius_);
   for (int x = origin[0] - half_width; x < origin[0] + half_width; x++) {
     for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
