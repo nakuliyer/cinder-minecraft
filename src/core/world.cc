@@ -5,6 +5,7 @@
 using ci::vec2;
 using ci::vec3;
 using ci::gl::drawCube;
+using ci::gl::drawStrokedCube;
 using glm::distance;
 using glm::dot;
 using glm::length;
@@ -151,35 +152,38 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
   return BlockTypes::kNone;
 }
 
-size_t World::GetClosestBlockIndex(const vec3& player_transform,
-                                   const vec3& camera_forward) const {
-  float min_closeness = FLT_MAX;
-  size_t closest_block_index = 0;
+int World::GetClosestBlockIndex(const vec3& player_transform,
+                                const vec3& camera_forward) const {
+  float min_distance = FLT_MAX;
+  int closest_block = -1;
   size_t index = 0;
   for (const Block& block : blocks_) {
-    vec3 block_vector = block.GetCenter() - player_transform;
-    float distance = length(block_vector);
-    float delta_angle = acos(dot(camera_forward, block_vector / distance));
-    float closeness = ComputeClosenessScore(delta_angle, distance);
-    if (closeness < min_closeness) {
-      min_closeness = closeness;
-      closest_block_index = index;
+    vec3 displacement = block.GetCenter() - player_transform;
+    if (GetAngle(camera_forward, displacement) <= 0.3 &&
+        length(displacement) < min_distance) {
+      min_distance = length(displacement);
+      closest_block = index;
     }
     ++index;
   }
-  return closest_block_index;
+  std::cout << "Closest Block at " << closest_block << std::endl;
+  return closest_block;
 }
 
-vec3 World::GetClosestBlock(const vec3& player_transform,
-                            const vec3& camera_forward) const {
-  size_t closest_block = GetClosestBlockIndex(player_transform, camera_forward);
-  return blocks_.at(closest_block).GetCenter();
+void World::OutlineClosestBlock(const vec3& player_transform,
+                                const vec3& camera_forward) const {
+  int closest_block = GetClosestBlockIndex(player_transform, camera_forward);
+  if (closest_block != -1) {
+    drawStrokedCube(blocks_.at(closest_block).GetCenter(), vec3(1, 1, 1));
+  }
 }
 
 void World::DeleteClosestBlock(const vec3& player_transform,
                                const vec3& camera_forward) {
   size_t closest_block = GetClosestBlockIndex(player_transform, camera_forward);
-  blocks_.erase(blocks_.begin() + closest_block);
+  if (closest_block != -1) {
+    blocks_.erase(blocks_.begin() + closest_block);
+  }
 }
 
 float World::ComputeClosenessScore(float delta_angle, float delta_position) {

@@ -13,10 +13,6 @@ namespace minecraft {
 
 /// cinder-compatible world
 class World {
-  /// x, y, and z width of a chunk
-  static const size_t kGenerationRadius = 3;
-  /// maximum distance from camera allowed to render a block
-  static const size_t kRenderRadius = 15;
   /// importance of angle difference on the closeness score between player and
   /// block
   static const float kClosenessAngleCoefficient;
@@ -26,7 +22,8 @@ class World {
 
  public:
   /// initializes the Perlin noise and generates chunks adjacent to the player
-  World(const ci::vec3& origin_position, size_t chunk_radius, size_t render_radius);
+  World(const ci::vec3& origin_position, size_t chunk_radius,
+        size_t render_radius);
 
   /// renders the blocks in the player's chunk and all adjacent chunks if they
   /// are within rendering distance and in front of the player's field of view.
@@ -46,7 +43,7 @@ class World {
   /// \return block type
   BlockTypes GetBlockAt(const ci::vec3& transform);
 
-  ci::vec3 GetClosestBlock(const ci::vec3& player_transform,
+  void OutlineClosestBlock(const ci::vec3& player_transform,
                            const ci::vec3& camera_forward) const;
 
   void DeleteClosestBlock(const ci::vec3& player_transform,
@@ -107,8 +104,8 @@ class World {
   void GenerateChunk(std::vector<int> old_chunk, int delta_x, int delta_y,
                      int delta_z);
 
-  size_t GetClosestBlockIndex(const ci::vec3& player_transform,
-                              const ci::vec3& camera_forward) const;
+  int GetClosestBlockIndex(const ci::vec3& player_transform,
+                           const ci::vec3& camera_forward) const;
 
   static float ComputeClosenessScore(float delta_angle, float delta_position);
 

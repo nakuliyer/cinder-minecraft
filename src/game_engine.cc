@@ -50,9 +50,8 @@ void MinecraftApp::draw() {
   camera_.Render();
   world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector(),
                     kFieldOfViewAngle);
-  drawStrokedCube(world_map_.GetClosestBlock(camera_.GetTransform(),
-                                             camera_.GetForwardVector()),
-                  vec3(1, 1, 1));
+  world_map_.OutlineClosestBlock(camera_.GetTransform(),
+                                 camera_.GetForwardVector());
 }
 
 void MinecraftApp::update() {
