@@ -37,8 +37,7 @@ const size_t MinecraftApp::kChunkRadius = 3;
 const size_t MinecraftApp::kRenderRadius = 15;
 
 // TODO: not always start at origin
-MinecraftApp::MinecraftApp()
-    : world_map_(vec3(0, 0, 0), kChunkRadius, kRenderRadius) {
+MinecraftApp::MinecraftApp() : world_map_(vec3(0, 0, 0), kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
   current_chunk_ = {0, 0, 0};
 }
@@ -49,9 +48,9 @@ void MinecraftApp::draw() {
   DrawUI();
   camera_.Render();
   world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector(),
-                    kFieldOfViewAngle);
-  world_map_.OutlineClosestBlock(camera_.GetTransform(),
-                                 camera_.GetForwardVector());
+                    kFieldOfViewAngle, kRenderRadius);
+  world_map_.OutlineBlockInDirectionOf(camera_.GetTransform(),
+                                       camera_.GetForwardVector());
 }
 
 void MinecraftApp::update() {
@@ -92,8 +91,8 @@ void MinecraftApp::keyDown(KeyEvent e) {
       }
       break;
     case KeyEvent::KEY_q:
-      world_map_.DeleteClosestBlock(camera_.GetTransform(),
-                                    camera_.GetForwardVector());
+      world_map_.DeleteBlockInDirectionOf(camera_.GetTransform(),
+                                          camera_.GetForwardVector());
       break;
     default:
       break;

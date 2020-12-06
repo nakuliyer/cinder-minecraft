@@ -17,12 +17,10 @@ using std::vector;
 
 namespace minecraft {
 
-const float World::kClosenessAngleCoefficient = 40.0f;
-const float World::kClosenessPositionCoefficient = 1.0f;
+const float World::kDirectionalAngleAllowance = 0.3f;
 
-World::World(const ci::vec3& origin_position, size_t chunk_radius,
-             size_t render_radius)
-    : chunk_radius_(chunk_radius), render_radius_(render_radius) {
+World::World(const ci::vec3& origin_position, size_t chunk_radius)
+    : chunk_radius_(chunk_radius) {
   random_device rd;
   mt19937 mt(rd());
   uniform_int_distribution<int> dist(INT_MIN, INT_MAX);
@@ -33,9 +31,10 @@ World::World(const ci::vec3& origin_position, size_t chunk_radius,
 }
 
 void World::Render(const vec3& origin, const vec3& forward,
-                   float field_of_view_angle) {
+                   float field_of_view_angle, size_t render_radius) const {
   for (const Block& block : blocks_) {
-    if (IsWithinRenderDistance(block, origin, forward, field_of_view_angle)) {
+    if (IsWithinRenderDistance(block, origin, forward, field_of_view_angle,
+                               render_radius)) {
       block.Render();
     }
   }
@@ -43,8 +42,9 @@ void World::Render(const vec3& origin, const vec3& forward,
 
 bool World::IsWithinRenderDistance(const Block& block, const vec3& origin,
                                    const vec3& forward,
-                                   float field_of_view_angle) const {
-  return distance(origin, block.GetCenter()) <= render_radius_ &&
+                                   float field_of_view_angle,
+                                   size_t render_radius) {
+  return distance(origin, block.GetCenter()) <= render_radius &&
          GetAngle(block.GetCenter() - origin, forward) <= field_of_view_angle;
 }
 
@@ -115,11 +115,11 @@ void World::InitializeAdjacentChunks(const vector<int>& origin_chunk) {
   }
 }
 
-void World::GenerateChunk(vector<int> old_chunk, int delta_x, int delta_y,
+void World::GenerateChunk(vector<int> reference_chunk, int delta_x, int delta_y,
                           int delta_z) {
-  int origin[] = {2 * (old_chunk[0] + delta_x) * int(chunk_radius_),
-                  2 * (old_chunk[1] + delta_y) * int(chunk_radius_),
-                  2 * (old_chunk[2] + delta_z) * int(chunk_radius_)};
+  int origin[] = {2 * (reference_chunk[0] + delta_x) * int(chunk_radius_),
+                  2 * (reference_chunk[1] + delta_y) * int(chunk_radius_),
+                  2 * (reference_chunk[2] + delta_z) * int(chunk_radius_)};
   int half_width = int(chunk_radius_);
   for (int x = origin[0] - half_width; x < origin[0] + half_width; x++) {
     for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
@@ -152,43 +152,36 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
   return BlockTypes::kNone;
 }
 
-int World::GetClosestBlockIndex(const vec3& player_transform,
-                                const vec3& camera_forward) const {
+int World::GetBlockIndexInDirectionOf(const vec3& origin,
+                                      const vec3& forward) const {
   float min_distance = FLT_MAX;
   int closest_block = -1;
   size_t index = 0;
   for (const Block& block : blocks_) {
-    vec3 displacement = block.GetCenter() - player_transform;
-    if (GetAngle(camera_forward, displacement) <= 0.3 &&
+    vec3 displacement = block.GetCenter() - origin;
+    if (GetAngle(forward, displacement) <= kDirectionalAngleAllowance &&
         length(displacement) < min_distance) {
       min_distance = length(displacement);
       closest_block = index;
     }
     ++index;
   }
-  std::cout << "Closest Block at " << closest_block << std::endl;
   return closest_block;
 }
 
-void World::OutlineClosestBlock(const vec3& player_transform,
-                                const vec3& camera_forward) const {
-  int closest_block = GetClosestBlockIndex(player_transform, camera_forward);
+void World::OutlineBlockInDirectionOf(const vec3& origin,
+                                      const vec3& forward) const {
+  int closest_block = GetBlockIndexInDirectionOf(origin, forward);
   if (closest_block != -1) {
     drawStrokedCube(blocks_.at(closest_block).GetCenter(), vec3(1, 1, 1));
   }
 }
 
-void World::DeleteClosestBlock(const vec3& player_transform,
-                               const vec3& camera_forward) {
-  size_t closest_block = GetClosestBlockIndex(player_transform, camera_forward);
+void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward) {
+  size_t closest_block = GetBlockIndexInDirectionOf(origin, forward);
   if (closest_block != -1) {
     blocks_.erase(blocks_.begin() + closest_block);
   }
-}
-
-float World::ComputeClosenessScore(float delta_angle, float delta_position) {
-  return kClosenessAngleCoefficient * delta_angle +
-         kClosenessPositionCoefficient * delta_position;
 }
 
 float World::GetAngle(const vec3& first, const vec3& second) {
