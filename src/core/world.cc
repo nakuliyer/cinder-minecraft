@@ -17,7 +17,7 @@ using std::vector;
 
 namespace minecraft {
 
-const float World::kDirectionalAngleAllowance = 0.3f;
+const float World::kDirectionalAngleAllowance = 0.2f;
 
 World::World(const ci::vec3& origin_position, size_t chunk_radius)
     : chunk_radius_(chunk_radius) {
@@ -145,7 +145,8 @@ BlockTypes World::GetBlockAt(const vec3& transform) {
 }
 
 BlockTypes World::GenerateBlockAt(const vec3& transform) {
-  float height = noise_.GetNoise(round(transform.x), round(transform.z));
+  float height =
+      noise_.GetNoise(round(transform.x) * 10.0f, round(transform.z) * 10.0f);
   if (int(round(transform.y)) <= int(height * 5.0f - 3.0f)) {
     return BlockTypes::kGrass;
   }

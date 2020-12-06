@@ -13,7 +13,7 @@ static const std::string kAssetsRoot =
     "final-project-nakuliyer/assets/";
 
 static const std::map<BlockTypes, std::string> kTextureFiles = {
-    {kGrass, "dirt.png"}};
+    {kGrass, "test.png"}};
 
 class Texture {
  public:
