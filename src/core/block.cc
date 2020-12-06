@@ -20,12 +20,12 @@ const vec3 Block::kCubeVertices[8] = {
     {0.5f, 0.5f, 0.5f},   {-0.5f, 0.5f, 0.5f}};
 
 const vec3 Block::kCubeFaces[6][4] = {
-    {kCubeVertices[3], kCubeVertices[2], kCubeVertices[6], kCubeVertices[7]},
-    {kCubeVertices[0], kCubeVertices[1], kCubeVertices[2], kCubeVertices[3]},
-    {kCubeVertices[7], kCubeVertices[6], kCubeVertices[5], kCubeVertices[4]},
-    {kCubeVertices[4], kCubeVertices[5], kCubeVertices[1], kCubeVertices[0]},
-    {kCubeVertices[5], kCubeVertices[6], kCubeVertices[2], kCubeVertices[1]},
-    {kCubeVertices[7], kCubeVertices[4], kCubeVertices[0], kCubeVertices[3]}};
+    {kCubeVertices[3], kCubeVertices[7], kCubeVertices[6], kCubeVertices[2]},
+    {kCubeVertices[0], kCubeVertices[4], kCubeVertices[7], kCubeVertices[3]},
+    {kCubeVertices[4], kCubeVertices[5], kCubeVertices[6], kCubeVertices[7]},
+    {kCubeVertices[5], kCubeVertices[1], kCubeVertices[2], kCubeVertices[6]},
+    {kCubeVertices[1], kCubeVertices[0], kCubeVertices[3], kCubeVertices[2]},
+    {kCubeVertices[1], kCubeVertices[5], kCubeVertices[4], kCubeVertices[0]}};
 
 Block::Block(const BlockTypes& block_type, const vec3& center) {
   texture_ = Texture(block_type).GetTexture();
