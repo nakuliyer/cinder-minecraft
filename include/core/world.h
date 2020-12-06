@@ -44,15 +44,35 @@ class World {
   /// \return block type
   BlockTypes GetBlockAt(const ci::vec3& transform);
 
+  /// draws a stroked cube at the closest block in the direction of `forward`
+  /// from `origin`
+  ///
+  /// \param origin a vector
+  /// \param forward a vector
   void OutlineBlockInDirectionOf(const ci::vec3& origin,
                                  const ci::vec3& forward) const;
 
+  /// deleted the closest block in the direction of `forward` from `origin`
+  ///
+  /// \param origin a vector
+  /// \param forward a vector
   void DeleteBlockInDirectionOf(const ci::vec3& origin,
-                                const ci::vec3& foward);
+                                const ci::vec3& forward);
 
+  /// \param old_chunk player's old chunk
+  /// \param new_position player's new position
+  /// \return true if and only if the player is outside the bounds of
+  /// `old_chunk`
   bool HasMovedChunks(const std::vector<int>& old_chunk,
                       const ci::vec3& new_position) const;
 
+  /// deletes far away (>1 chunk distance) blocks and pushes blocks to the
+  /// blocks array that are adjacent to `new_chunk`. i.e. if the player has
+  /// passed between chunks in the x direction, loads the adjacent chunks
+  /// further away in the x direction in anticipation of movement there
+  ///
+  /// \param old_chunk player's old chunk
+  /// \param new_chunk player's new chunk
   void MoveToChunk(const std::vector<int>& old_chunk,
                    const std::vector<int>& new_chunk);
 
@@ -108,14 +128,18 @@ class World {
   /// \return a block type, or `kNone`
   BlockTypes GenerateBlockAt(const ci::vec3& transform);
 
+  /// gets the index in `blocks_` of the closest block in the direction of
+  /// `forward` from `origin`, or -1 if there is no such block
   int GetBlockIndexInDirectionOf(const ci::vec3& origin,
                                  const ci::vec3& forward) const;
 
+  /// whether or not a block should be rendered in a particular frame
   static bool IsWithinRenderDistance(const Block& block, const ci::vec3& origin,
                                      const ci::vec3& forward,
                                      float field_of_view_angle,
                                      size_t render_radius);
 
+  /// angle between two vectors
   static float GetAngle(const ci::vec3& first, const ci::vec3& second);
 };
 
