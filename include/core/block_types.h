@@ -3,7 +3,7 @@
 
 namespace minecraft {
 
-enum BlockTypes { kNone, kGrass };
+enum BlockTypes { kNone, kGrass, kDirt };
 
 }  // namespace minecraft
 

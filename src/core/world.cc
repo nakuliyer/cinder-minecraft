@@ -147,8 +147,10 @@ BlockTypes World::GetBlockAt(const vec3& transform) {
 BlockTypes World::GenerateBlockAt(const vec3& transform) {
   float height =
       noise_.GetNoise(round(transform.x) * 10.0f, round(transform.z) * 10.0f);
-  if (int(round(transform.y)) <= int(height * 5.0f - 3.0f)) {
+  if (int(round(transform.y)) == int(height * 5.0f - 3.0f)) {
     return BlockTypes::kGrass;
+  } else if (int(round(transform.y)) < int(height * 5.0f - 3.0f)) {
+    return BlockTypes::kDirt;
   }
   return BlockTypes::kNone;
 }
