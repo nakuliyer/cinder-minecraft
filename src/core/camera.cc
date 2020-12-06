@@ -58,7 +58,10 @@ void Camera::RotateXZ(float radians) {
 }
 
 void Camera::RotateXY(float radians) {
-  rotation_.y += radians;
+  if (-M_PI / 2.0f < rotation_.y + radians &&
+      rotation_.y + radians < M_PI / 2.0f) {
+    rotation_.y += radians;
+  }
 }
 
 }  // namespace minecraft
