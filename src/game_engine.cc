@@ -37,7 +37,7 @@ const size_t MinecraftApp::kChunkRadius = 2;
 const size_t MinecraftApp::kRenderRadius = 8;
 
 // TODO: not always start at origin
-MinecraftApp::MinecraftApp() : world_map_(vec3(0, 0, 0), kChunkRadius) {
+MinecraftApp::MinecraftApp() : world_(vec3(0, 0, 0), kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
   current_chunk_ = {0, 0, 0};
 }
@@ -47,10 +47,10 @@ void MinecraftApp::draw() {
   setMatricesWindow(getWindowSize());
   DrawUI();
   camera_.Render();
-  world_map_.Render(camera_.GetTransform(), camera_.GetForwardVector(),
-                    kFieldOfViewAngle, kRenderRadius);
-  world_map_.OutlineBlockInDirectionOf(camera_.GetTransform(),
-                                       camera_.GetForwardVector());
+  world_.Render(camera_.GetTransform(), camera_.GetForwardVector(),
+                kFieldOfViewAngle, kRenderRadius);
+  world_.OutlineBlockInDirectionOf(camera_.GetTransform(),
+                                   camera_.GetForwardVector());
 }
 
 void MinecraftApp::update() {
@@ -63,9 +63,9 @@ void MinecraftApp::update() {
   } else {
     camera_.ApplyYForce(-kGravityForce);
   }
-  if (world_map_.HasMovedChunks(current_chunk_, camera_.GetTransform())) {
-    vector<int> new_chunk = world_map_.GetChunk(camera_.GetTransform());
-    world_map_.MoveToChunk(current_chunk_, new_chunk);
+  if (world_.HasMovedChunks(current_chunk_, camera_.GetTransform())) {
+    vector<int> new_chunk = world_.GetChunk(camera_.GetTransform());
+    world_.MoveToChunk(current_chunk_, new_chunk);
     current_chunk_ = new_chunk;
   }
 }
@@ -91,8 +91,10 @@ void MinecraftApp::keyDown(KeyEvent e) {
       }
       break;
     case KeyEvent::KEY_q:
-      world_map_.DeleteBlockInDirectionOf(camera_.GetTransform(),
-                                          camera_.GetForwardVector());
+      world_.DeleteBlockInDirectionOf(camera_.GetTransform(),
+                                      camera_.GetForwardVector());
+      break;
+    case KeyEvent::KEY_e:
       break;
     default:
       break;
@@ -111,7 +113,7 @@ void MinecraftApp::MoveIfPossible(float delta_x, float delta_z) {
 
 bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
   vec3 location = camera_.GetTransform() + vec3(delta_x, delta_y, delta_z);
-  return world_map_.GetBlockAt(location) != BlockTypes::kNone;
+  return world_.GetBlockAt(location) != BlockTypes::kNone;
 }
 
 void MinecraftApp::DrawUI() {

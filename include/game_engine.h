@@ -17,8 +17,8 @@ static const float kWindowSize = 575.0f;
 static const float kCentralPartition = 0.5f;
 
 static const float kMoveDistance = 0.8f;
-static const float kJumpForce = 0.4f;       // velocity upwards on jump
-static const float kGravityForce = 0.05f;   // acceleration downwards
+static const float kJumpForce = 0.3f;       // velocity upwards on jump
+static const float kGravityForce = 0.03f;   // acceleration downwards
 static const float kRotationSpeed = 0.05f;  // in radians
 
 static const float kPlayerHeight = 1.9f;
@@ -40,7 +40,7 @@ class MinecraftApp : public ci::app::App {
 
  private:
   Camera camera_;
-  World world_map_;
+  World world_;
   std::vector<int> current_chunk_;
 
   void DrawUI();
