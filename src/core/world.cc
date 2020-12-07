@@ -63,8 +63,8 @@ void World::DeleteDistanceChunks(const vector<int>& new_chunk) {
   size_t block_index = 0;
   while (block_index < blocks_.size()) {
     vector<int> block_chunk = GetChunk(blocks_[block_index].GetCenter());
-    if (abs(block_chunk[0] - new_chunk[0]) > 1 &&
-        abs(block_chunk[1] - new_chunk[1]) > 1 &&
+    if (abs(block_chunk[0] - new_chunk[0]) > 1 ||
+        abs(block_chunk[1] - new_chunk[1]) > 1 ||
         abs(block_chunk[2] - new_chunk[2]) > 1) {
       blocks_.erase(blocks_.begin() + block_index);
     } else {
