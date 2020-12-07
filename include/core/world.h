@@ -3,6 +3,7 @@
 
 #include <FastNoiseLite.h>
 
+#include <unordered_map>
 #include <vector>
 
 #include "cinder/gl/gl.h"
@@ -63,8 +64,7 @@ class World {
   ///
   /// \param origin a vector
   /// \param forward a vector
-  void CreateBlockInDirectionOf(const ci::vec3& origin,
-                                const ci::vec3& forward,
+  void CreateBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
                                 const BlockTypes& block_type);
 
   /// \param old_chunk player's old chunk
@@ -91,12 +91,24 @@ class World {
   std::vector<int> GetChunk(const ci::vec3& point) const;
 
  private:
+  struct BlockHasher {
+    // https://stackoverflow.com/questions/24003071/hashing-function-not-working-properly
+    std::size_t operator()(const glm::ivec3& key) const {
+      using std::hash;
+      using std::size_t;
+
+      return ((key.x * 5209) ^ (key.y * 1811)) ^ (key.z * 7297);
+    }
+  };
+
   /// radius of chunks
   size_t chunk_radius_;
   /// current set of blocks in the current chunk and all adjacent chunks
   std::vector<Block> blocks_;
   /// Perlin noise terrain generator
   FastNoiseLite noise_;
+  /// a map of points to blocks for saving and loading
+  std::unordered_map<ci::vec3, BlockTypes, BlockHasher> map_;
 
   /// initialization step, generates all chunks near the player at the start of
   /// game

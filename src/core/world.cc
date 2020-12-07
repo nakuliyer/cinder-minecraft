@@ -11,6 +11,7 @@ using glm::dot;
 using glm::length;
 using std::abs;
 using std::mt19937;
+using std::pair;
 using std::random_device;
 using std::uniform_int_distribution;
 using std::vector;
@@ -145,11 +146,17 @@ BlockTypes World::GetBlockAt(const vec3& transform) {
 }
 
 BlockTypes World::GenerateBlockAt(const vec3& transform) {
+//  if (map_.find(transform) != map_.end()) {
+//    std::cout << "map at " << transform << " is " << map_.at(transform) << std::endl;
+////    return map_.at(transform);
+//  }
   float height =
       noise_.GetNoise(round(transform.x) * 10.0f, round(transform.z) * 10.0f);
   if (int(round(transform.y)) == int(height * 5.0f - 3.0f)) {
+    map_.insert(pair<vec3, BlockTypes>(transform, BlockTypes::kGrass));
     return BlockTypes::kGrass;
   } else if (int(round(transform.y)) < int(height * 5.0f - 3.0f)) {
+    map_.insert(pair<vec3, BlockTypes>(transform, BlockTypes::kDirt));
     return BlockTypes::kDirt;
   }
   return BlockTypes::kNone;
@@ -183,6 +190,7 @@ void World::OutlineBlockInDirectionOf(const vec3& origin,
 void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward) {
   size_t closest_block = GetBlockIndexInDirectionOf(origin, forward);
   if (closest_block != -1) {
+    map_.erase(map_.find(blocks_.at(closest_block).GetCenter()));
     blocks_.erase(blocks_.begin() + closest_block);
   }
 }
@@ -198,7 +206,8 @@ void World::CreateBlockInDirectionOf(const vec3& origin, const vec3& forward,
   vec3 desired_hit_box =
       FindAxisAlignedUnitVector(displacement) + closest_block;
   if (GetBlockAt(desired_hit_box) == kNone) {
-    blocks_.push_back(Block(block_type, desired_hit_box));
+    map_.insert(pair<vec3, BlockTypes>(desired_hit_box, block_type));
+    blocks_.emplace_back(block_type, desired_hit_box);
   }
 }
 
