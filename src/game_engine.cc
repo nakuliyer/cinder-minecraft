@@ -95,6 +95,9 @@ void MinecraftApp::keyDown(KeyEvent e) {
                                       camera_.GetForwardVector());
       break;
     case KeyEvent::KEY_e:
+      world_.CreateBlockInDirectionOf(camera_.GetTransform(),
+                                      camera_.GetForwardVector(),
+                                      BlockTypes::kGrass);
       break;
     default:
       break;

@@ -59,6 +59,14 @@ class World {
   void DeleteBlockInDirectionOf(const ci::vec3& origin,
                                 const ci::vec3& forward);
 
+  /// deleted the closest block in the direction of `forward` from `origin`
+  ///
+  /// \param origin a vector
+  /// \param forward a vector
+  void CreateBlockInDirectionOf(const ci::vec3& origin,
+                                const ci::vec3& forward,
+                                const BlockTypes& block_type);
+
   /// \param old_chunk player's old chunk
   /// \param new_position player's new position
   /// \return true if and only if the player is outside the bounds of
@@ -132,6 +140,8 @@ class World {
   /// `forward` from `origin`, or -1 if there is no such block
   int GetBlockIndexInDirectionOf(const ci::vec3& origin,
                                  const ci::vec3& forward) const;
+
+  static ci::vec3 FindAxisAlignedUnitVector(const ci::vec3& vector);
 
   /// whether or not a block should be rendered in a particular frame
   static bool IsWithinRenderDistance(const Block& block, const ci::vec3& origin,

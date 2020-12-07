@@ -187,8 +187,33 @@ void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward) {
   }
 }
 
+void World::CreateBlockInDirectionOf(const vec3& origin, const vec3& forward,
+                                     const BlockTypes& block_type) {
+  size_t closest_block_index = GetBlockIndexInDirectionOf(origin, forward);
+  if (closest_block_index == -1) {
+    return;
+  }
+  vec3 closest_block = blocks_.at(closest_block_index).GetCenter();
+  vec3 displacement = origin - closest_block;
+  vec3 desired_hit_box =
+      FindAxisAlignedUnitVector(displacement) + closest_block;
+  if (GetBlockAt(desired_hit_box) == kNone) {
+    blocks_.push_back(Block(block_type, desired_hit_box));
+  }
+}
+
 float World::GetAngle(const vec3& first, const vec3& second) {
   return acos(dot(first, second) / (length(first) * length(second)));
+}
+
+vec3 World::FindAxisAlignedUnitVector(const vec3& vector) {
+  if (abs(vector.x) >= abs(vector.y) && abs(vector.x) >= abs(vector.z)) {
+    return vec3(copysign(1, vector.x), 0, 0);
+  } else if (abs(vector.y) >= abs(vector.x) && abs(vector.y) >= abs(vector.z)) {
+    return vec3(0, copysign(1, vector.y), 0);
+  } else {
+    return vec3(0, 0, copysign(1, vector.z));
+  }
 }
 
 }  // namespace minecraft
