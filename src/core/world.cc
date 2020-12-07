@@ -64,8 +64,8 @@ void World::DeleteDistanceChunks(const vector<int>& new_chunk) {
   size_t block_index = 0;
   while (block_index < blocks_.size()) {
     vector<int> block_chunk = GetChunk(blocks_[block_index].GetCenter());
-    if (abs(block_chunk[0] - new_chunk[0]) > 1 ||
-        abs(block_chunk[1] - new_chunk[1]) > 1 ||
+    if (abs(block_chunk[0] - new_chunk[0]) > 1 &&
+        abs(block_chunk[1] - new_chunk[1]) > 1 &&
         abs(block_chunk[2] - new_chunk[2]) > 1) {
       blocks_.erase(blocks_.begin() + block_index);
     } else {
@@ -146,17 +146,14 @@ BlockTypes World::GetBlockAt(const vec3& transform) {
 }
 
 BlockTypes World::GenerateBlockAt(const vec3& transform) {
-//  if (map_.find(transform) != map_.end()) {
-//    std::cout << "map at " << transform << " is " << map_.at(transform) << std::endl;
-////    return map_.at(transform);
-//  }
+  if (map_.find(transform) != map_.end()) {
+    return map_.at(transform);
+  }
   float height =
       noise_.GetNoise(round(transform.x) * 10.0f, round(transform.z) * 10.0f);
   if (int(round(transform.y)) == int(height * 5.0f - 3.0f)) {
-    map_.insert(pair<vec3, BlockTypes>(transform, BlockTypes::kGrass));
     return BlockTypes::kGrass;
   } else if (int(round(transform.y)) < int(height * 5.0f - 3.0f)) {
-    map_.insert(pair<vec3, BlockTypes>(transform, BlockTypes::kDirt));
     return BlockTypes::kDirt;
   }
   return BlockTypes::kNone;
@@ -190,7 +187,8 @@ void World::OutlineBlockInDirectionOf(const vec3& origin,
 void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward) {
   size_t closest_block = GetBlockIndexInDirectionOf(origin, forward);
   if (closest_block != -1) {
-    map_.erase(map_.find(blocks_.at(closest_block).GetCenter()));
+    map_.insert(pair<vec3, BlockTypes>(blocks_.at(closest_block).GetCenter(),
+                                       BlockTypes::kNone));
     blocks_.erase(blocks_.begin() + closest_block);
   }
 }
