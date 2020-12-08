@@ -41,6 +41,21 @@ Block::Block(const BlockTypes& block_type, const vec3& center) {
   SetUp();
 }
 
+void Block::Render() const {
+  ci::gl::ScopedGlslProg glslScope{
+      ci::gl::getStockShader(ci::gl::ShaderDef().texture())};
+  ci::gl::ScopedTextureBind texScope{texture_};
+  ci::gl::draw(mesh_);
+}
+
+BlockTypes Block::GetType() const {
+  return block_type_;
+}
+
+vec3 Block::GetCenter() const {
+  return center_;
+}
+
 void Block::SetUp() {
   // https://mottosso.gitbooks.io/cinder/content/book/guide_to_meshes.htmlss
   mesh_ = TriMesh(TriMesh::Format().positions().texCoords(2));
@@ -58,21 +73,6 @@ void Block::SetUp() {
     mesh_.appendTriangle(vertices_count - 4, vertices_count - 2,
                          vertices_count - 1);
   }
-}
-
-void Block::Render() const {
-  ci::gl::ScopedGlslProg glslScope{
-      ci::gl::getStockShader(ci::gl::ShaderDef().texture())};
-  ci::gl::ScopedTextureBind texScope{texture_};
-  ci::gl::draw(mesh_);
-}
-
-BlockTypes Block::GetType() const {
-  return block_type_;
-}
-
-vec3 Block::GetCenter() const {
-  return center_;
 }
 
 }  // namespace minecraft

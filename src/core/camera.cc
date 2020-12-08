@@ -68,4 +68,8 @@ void Camera::RotateXY(float radians) {
   }
 }
 
+vec3 Camera::GetTransform() const {
+  return transform_;
+}
+
 }  // namespace minecraft
