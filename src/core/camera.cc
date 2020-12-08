@@ -3,10 +3,6 @@
 using ci::CameraPersp;
 using ci::vec2;
 using ci::vec3;
-using ci::app::KeyEvent;
-using ci::app::MouseEvent;
-using ci::app::setWindowSize;
-using ci::app::Window;
 using ci::gl::clear;
 using ci::gl::drawCube;
 using ci::gl::enableDepthRead;

@@ -1,6 +1,8 @@
 #ifndef MINECRAFT_GAME_ENGINE_H
 #define MINECRAFT_GAME_ENGINE_H
 
+#include <cinder/app/App.h>
+
 #include <string>
 #include <vector>
 

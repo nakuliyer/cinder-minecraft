@@ -14,10 +14,6 @@ using std::vector;
 
 namespace minecraft {
 
-const size_t Block::kSquareVerticesCount = 4;
-const size_t Block::kCubeVerticesCount = 8;
-const size_t Block::kCubeFacesCount = 6;
-
 const vec3 Block::kCubeVertices[8] = {
     {-0.5, -0.5f, -0.5f}, {0.5f, -0.5f, -0.5f}, {0.5f, 0.5f, -0.5f},
     {-0.5f, 0.5f, -0.5f}, {-0.5f, -0.5f, 0.5f}, {0.5f, -0.5f, 0.5f},
