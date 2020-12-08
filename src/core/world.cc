@@ -115,9 +115,9 @@ void World::GenerateChunk(vector<int> reference_chunk, int delta_x, int delta_y,
                   2 * (reference_chunk[1] + delta_y) * int(chunk_radius_),
                   2 * (reference_chunk[2] + delta_z) * int(chunk_radius_)};
   int half_width = int(chunk_radius_);
-  for (int x = origin[0] - half_width; x < origin[0] + half_width; x++) {
-    for (int y = origin[1] - half_width; y < origin[1] + half_width; ++y) {
-      for (int z = origin[2] - half_width; z < origin[2] + half_width; ++z) {
+  for (int x = origin[0] - half_width; x <= origin[0] + half_width; x++) {
+    for (int y = origin[1] - half_width; y <= origin[1] + half_width; ++y) {
+      for (int z = origin[2] - half_width; z <= origin[2] + half_width; ++z) {
         BlockTypes block_type = GenerateBlockAt(vec3(x, y, z));
         if (block_type != BlockTypes::kNone) {
           blocks_.emplace_back(block_type, vec3(x, y, z));
