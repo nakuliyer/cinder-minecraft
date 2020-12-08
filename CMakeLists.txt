@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 11)
-project(minecraft)
+project(minecraft
+        VERSION 1.0
+        DESCRIPTION "CS 126 Final"
+        LANGUAGES CXX)
 
 # This tells the compiler to not aggressively optimize and
 # to include debugging information so that the debugger
@@ -71,18 +74,19 @@ list(APPEND SOURCE_FILES src/core/texture.cc)
 list(APPEND SOURCE_FILES src/game_engine.cc)
 
 # Textures
-list(APPEND TEXTURES assets/test.png)
-list(APPEND TEXTURES assets/dirt.png)
-list(APPEND TEXTURES assets/grass.png)
+#list(APPEND TEXTURES assets/test.png)
+#list(APPEND TEXTURES assets/dirt.png)
+#list(APPEND TEXTURES assets/grass.png)
 
 ci_make_app(
         APP_NAME minecraft
         CINDER_PATH ${CINDER_PATH}
         SOURCES apps/cinder_app_main.cc ${SOURCE_FILES}
         INCLUDES include
-        RESOURCES ${TEXTURES}
         LIBRARIES catch2 fastnoise
 )
+
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 # ci_make_app(
 #         APP_NAME        ideal-gas-test

@@ -1,10 +1,13 @@
 #include "core/texture.h"
 
+#include "cinder/app/app.h"
+
+using ci::loadImage;
+using ci::app::getAssetPath;
+using ci::gl::Texture2d;
+using ci::gl::Texture2dRef;
 using std::invalid_argument;
 using std::string;
-using ci::gl::Texture2dRef;
-using ci::gl::Texture2d;
-using ci::loadImage;
 
 namespace minecraft {
 
@@ -12,8 +15,7 @@ Texture::Texture(const BlockTypes &block_type) : block_type_(block_type) {
 }
 
 Texture2dRef Texture::GetTexture() {
-  string file = kAssetsRoot + GetTextureFileName();
-  return Texture2d::create(loadImage(file));
+  return Texture2d::create(loadImage(getAssetPath(GetTextureFileName())));
 }
 
 string Texture::GetTextureFileName() {
