@@ -5,10 +5,11 @@
 #include <vector>
 
 #include "cinder/Camera.h"
+#include "cinder/gl/Fbo.h"
 #include "cinder/gl/gl.h"
 #include "core/camera.h"
+#include "core/terrain_generator.h"
 #include "core/world.h"
-#include "cinder/gl/Fbo.h"
 
 namespace minecraft {
 
@@ -41,6 +42,7 @@ class MinecraftApp : public ci::app::App {
 
  private:
   Camera camera_;
+  TerrainGenerator terrain_generator_;
   World world_;
   std::vector<int> current_chunk_;
 

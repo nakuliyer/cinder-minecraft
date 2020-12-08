@@ -39,7 +39,9 @@ const float MinecraftApp::kPlayerStartingHeight = 10.0f;
 
 MinecraftApp::MinecraftApp()
     : camera_(vec3(0, kPlayerStartingHeight, 0)),
-      world_(vec3(0, kPlayerStartingHeight, 0), kChunkRadius) {
+      terrain_generator_(-3, 2, 10.0f, rand() % 100000),
+      world_(terrain_generator_, vec3(0, kPlayerStartingHeight, 0),
+             kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
   current_chunk_ = world_.GetChunk(vec3(0, kPlayerStartingHeight, 0));
 }

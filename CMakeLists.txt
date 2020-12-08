@@ -71,6 +71,7 @@ list(APPEND SOURCE_FILES src/core/camera.cc)
 list(APPEND SOURCE_FILES src/core/world.cc)
 list(APPEND SOURCE_FILES src/core/block.cc)
 list(APPEND SOURCE_FILES src/core/texture.cc)
+list(APPEND SOURCE_FILES src/core/terrain_generator.cc)
 list(APPEND SOURCE_FILES src/game_engine.cc)
 
 # Testing files

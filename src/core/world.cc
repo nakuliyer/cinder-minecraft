@@ -23,8 +23,9 @@ const int World::kSeaLevel = -3;
 const int World::kMaxHeight = 5;
 const float World::kNoiseVariance = 10.0f;
 
-World::World(const ci::vec3& origin_position, size_t chunk_radius)
-    : chunk_radius_(chunk_radius) {
+World::World(const TerrainGenerator& terrain_generator,
+             const ci::vec3& origin_position, size_t chunk_radius)
+    : terrain_generator_(terrain_generator), chunk_radius_(chunk_radius) {
   random_device rd;
   mt19937 mt(rd());
   uniform_int_distribution<int> dist(INT_MIN, INT_MAX);
@@ -152,20 +153,13 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
   if (player_map_edits_.find(transform) != player_map_edits_.end()) {
     return player_map_edits_.at(transform);
   }
-  int height = GetGrassHeight(transform.x, transform.z);
+  int height = terrain_generator_.GetTerrainHeight(transform.x, transform.z);
   if (int(round(transform.y)) == height) {
     return BlockTypes::kGrass;
   } else if (int(round(transform.y)) < height) {
     return BlockTypes::kDirt;
   }
   return BlockTypes::kNone;
-}
-
-int World::GetGrassHeight(float x, float z) {
-  float height_delta = kMaxHeight - kSeaLevel;
-  float noise_function =
-      noise_.GetNoise(round(x) * kNoiseVariance, round(z) * kNoiseVariance);
-  return int(noise_function * height_delta - kSeaLevel);
 }
 
 int World::GetBlockIndexInDirectionOf(const vec3& origin,

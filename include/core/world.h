@@ -9,6 +9,7 @@
 #include "cinder/gl/gl.h"
 #include "core/block.h"
 #include "core/block_types.h"
+#include "terrain_generator.h"
 
 namespace minecraft {
 
@@ -30,10 +31,12 @@ class World {
   /// initializes the terrain noise function and generates chunks adjacent to
   /// the player
   ///
+  /// \param terrain_generator terrain generator
   /// \param origin_position player's origin
   /// \param chunk_radius radius of each chunk
   /// \param render_radius radius to render blocks
-  World(const ci::vec3& origin_position, size_t chunk_radius);
+  World(const TerrainGenerator& terrain_generator,
+        const ci::vec3& origin_position, size_t chunk_radius);
 
   /// renders the blocks in the player's chunk and all adjacent chunks if they
   /// are within rendering distance and in front of the player's field of view.
@@ -108,7 +111,8 @@ class World {
       return ((key.x * 5209) ^ (key.y * 1811)) ^ (key.z * 7297);
     }
   };
-
+  /// terrain generator
+  TerrainGenerator terrain_generator_;
   /// radius of chunks
   size_t chunk_radius_;
   /// current set of blocks in the current chunk and all adjacent chunks
