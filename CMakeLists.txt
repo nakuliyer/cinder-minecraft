@@ -69,13 +69,18 @@ list(APPEND SOURCE_FILES src/core/world.cc)
 list(APPEND SOURCE_FILES src/core/block.cc)
 list(APPEND SOURCE_FILES src/core/texture.cc)
 list(APPEND SOURCE_FILES src/game_engine.cc)
-# list(APPEND TEST_FILES tests/core/simulation_test.cc)
+
+# Textures
+list(APPEND TEXTURES assets/test.png)
+list(APPEND TEXTURES assets/dirt.png)
+list(APPEND TEXTURES assets/grass.png)
 
 ci_make_app(
         APP_NAME minecraft
         CINDER_PATH ${CINDER_PATH}
         SOURCES apps/cinder_app_main.cc ${SOURCE_FILES}
         INCLUDES include
+        RESOURCES ${TEXTURES}
         LIBRARIES catch2 fastnoise
 )
 

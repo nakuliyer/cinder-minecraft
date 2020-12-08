@@ -8,9 +8,7 @@
 
 namespace minecraft {
 
-static const std::string kAssetsRoot =
-    "/Users/nakul/Documents/CLionProjects/Cinder/my-projects/"
-    "final-project-nakuliyer/assets/";
+static const std::string kAssetsRoot = "../resources/";
 
 static const std::map<BlockTypes, std::string> kTextureFiles = {
     {kGrass, "grass.png"}, {kDirt, "dirt.png"}};
