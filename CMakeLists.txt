@@ -8,7 +8,7 @@ project(minecraft
 # This tells the compiler to not aggressively optimize and
 # to include debugging information so that the debugger
 # can properly read what's going on.
-set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Debug)
 
 # Let's ensure -std=c++xx instead of -std=g++xx
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -73,11 +73,6 @@ list(APPEND SOURCE_FILES src/core/block.cc)
 list(APPEND SOURCE_FILES src/core/texture.cc)
 list(APPEND SOURCE_FILES src/game_engine.cc)
 
-# Textures
-#list(APPEND TEXTURES assets/test.png)
-#list(APPEND TEXTURES assets/dirt.png)
-#list(APPEND TEXTURES assets/grass.png)
-
 ci_make_app(
         APP_NAME minecraft
         CINDER_PATH ${CINDER_PATH}
@@ -85,17 +80,6 @@ ci_make_app(
         INCLUDES include
         LIBRARIES catch2 fastnoise
 )
-
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
-
-# ci_make_app(
-#         APP_NAME        ideal-gas-test
-#         CINDER_PATH     ${CINDER_PATH}
-#         SOURCES         tests/test_main.cc ${SOURCE_FILES} ${TEST_FILES}
-#         # RESOURCES       ${TEST_RESOURCES}
-#         INCLUDES        include
-#         LIBRARIES       catch2
-# )
 
 if (MSVC)
     set_property(TARGET ideal-gas-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
