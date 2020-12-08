@@ -1,3 +1,6 @@
-Fill this in before the final project deadline. Someone who has _no familiarity_ with your project should be able to read this and understand:
-* what your project does
-* how to set it up and run it
+[![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![docs](https://img.shields.io/badge/docs-yes-brightgreen)](docs/README.md)
+# Cinder Minecraft
+
+**Author**: 
+Nakul Iyer - [nakuli2@illinois.edu](mailto:nakuli2@illinois.edu)
