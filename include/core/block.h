@@ -12,11 +12,11 @@ namespace minecraft {
 /// cinder-compatible block
 class Block {
   /// count for use in cube faces rendering
-  static const size_t kSquareVerticesCount = 4;
+  static const size_t kSquareVerticesCount;
   /// count for use in cube rendering
-  static const size_t kCubeVerticesCount = 8;
+  static const size_t kCubeVerticesCount;
   /// count for use in cube rendering
-  static const size_t kCubeFacesCount = 6;
+  static const size_t kCubeFacesCount;
   /// the locations of vertices in a cube centered at the origin
   static const ci::vec3 kCubeVertices[kCubeVerticesCount];
   /// the faces of a cube with respect to the vertices in `kCubeVertices`

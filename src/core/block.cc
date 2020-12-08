@@ -14,11 +14,18 @@ using std::vector;
 
 namespace minecraft {
 
+const size_t Block::kSquareVerticesCount = 4;
+const size_t Block::kCubeVerticesCount = 8;
+const size_t Block::kCubeFacesCount = 6;
+
 const vec3 Block::kCubeVertices[8] = {
     {-0.5, -0.5f, -0.5f}, {0.5f, -0.5f, -0.5f}, {0.5f, 0.5f, -0.5f},
     {-0.5f, 0.5f, -0.5f}, {-0.5f, -0.5f, 0.5f}, {0.5f, -0.5f, 0.5f},
     {0.5f, 0.5f, 0.5f},   {-0.5f, 0.5f, 0.5f}};
 
+// this ordering is very particular and determined through manual testing in the
+// `minecraft-manual-test` app. the ordering corresponds to the particular
+// vertices in `kCubeVertices`.
 const vec3 Block::kCubeFaces[6][4] = {
     {kCubeVertices[3], kCubeVertices[7], kCubeVertices[6], kCubeVertices[2]},
     {kCubeVertices[0], kCubeVertices[4], kCubeVertices[7], kCubeVertices[3]},
