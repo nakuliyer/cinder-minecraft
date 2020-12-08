@@ -44,8 +44,17 @@ TEST_CASE("Camera can rotate and get a forward unit vector") {
 }
 
 TEST_CASE("Applying Y forces") {
-  Camera camera(vec3(0, 0, 0));
+  Camera camera(vec3(0, 0, 0),
+                -1000.0f);  // infinite terminal velocity, for demo
 
   camera.ApplyYForce(-9.81f);
   REQUIRE(camera.GetTransform() == vec3(0, -9.81f, 0));
+
+  camera.ApplyYForce(-9.81f);  // velocity will compound earlier -9.81f
+  REQUIRE(camera.GetTransform() == vec3(0, -29.43f, 0));
+
+  camera.ApplyNormalForce();
+  camera.ApplyYForce(
+      -9.81f);  // velocity will not compound because we applied normal force
+  REQUIRE(camera.GetTransform() == vec3(0, -39.24f, 0));
 }
