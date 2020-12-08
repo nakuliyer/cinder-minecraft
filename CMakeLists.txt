@@ -76,6 +76,7 @@ list(APPEND SOURCE_FILES src/game_engine.cc)
 
 # Testing files
 list(APPEND TEST_FILES tests/core/world_test.cc)
+list(APPEND TEST_FILES tests/core/camera_test.cc)
 
 ci_make_app(
         APP_NAME minecraft
