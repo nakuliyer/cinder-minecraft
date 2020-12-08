@@ -76,14 +76,20 @@ TEST_CASE("Chunk loading") {
   }
 
   SECTION("Not moving between chunks") {
-    vector<int> v = world.GetChunk(vec3(-4, 0,0 ));
-    for (int i : v) {
-      std::cout << i << ", ";
-    }
     REQUIRE(world.HasMovedChunks({0, 0, 0}, vec3(-1, 0, 1)) == false);
+    REQUIRE(world.HasMovedChunks({0, 0, 0}, vec3(-2, 0, 1)) == false);
+    REQUIRE(world.HasMovedChunks({0, 0, 0}, vec3(-1, 0, -2)) == false);
   }
 
   SECTION("Moving between chunks") {
-    REQUIRE(world.HasMovedChunks({0, 0, 0}, vec3(3, 0, 0)) == true);
+    REQUIRE(world.HasMovedChunks({0, 0, 0}, vec3(-2, 0, 2)) == true);
+    REQUIRE(world.HasMovedChunks({0, 0, 0}, vec3(2, 0, 1)) == true);
+  }
+
+  SECTION("Moving to a chunk loads properly") {
+    world.MoveToChunk({0, 0, 0}, {1, 0, 0});
+    vector<Block> new_blocks = world.GetBlocks();
+    // now, the world should have the abnormal (7, 1, 0) block
+    REQUIRE(new_blocks.size() == 12 * 12 * 2 + 1);
   }
 }
