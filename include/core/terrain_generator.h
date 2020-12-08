@@ -2,9 +2,9 @@
 #define MINECRAFT_TERRAIN_GENERATOR_H
 
 #include <FastNoiseLite.h>
+#include <cinder/gl/gl.h>
 
 #include "block_types.h"
-#include "cinder/gl/gl.h"
 
 namespace minecraft {
 

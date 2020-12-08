@@ -1,10 +1,9 @@
 #ifndef MINECRAFT_CAMERA_H
 #define MINECRAFT_CAMERA_H
 
-#include <string>
+#include <cinder/gl/gl.h>
 
-#include "cinder/app/RendererGl.h"
-#include "cinder/gl/gl.h"
+#include <string>
 
 namespace minecraft {
 

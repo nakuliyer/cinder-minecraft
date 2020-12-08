@@ -1,10 +1,11 @@
 #ifndef MINECRAFT_TEXTURE_H
 #define MINECRAFT_TEXTURE_H
 
+#include <cinder/gl/gl.h>
+
 #include <string>
 
-#include "cinder/gl/gl.h"
-#include "core/block_types.h"
+#include "block_types.h"
 
 namespace minecraft {
 

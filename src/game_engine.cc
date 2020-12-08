@@ -28,6 +28,13 @@ using std::vector;
 
 namespace minecraft {
 
+const float MinecraftApp::kWindowSize = 575.0f;
+const float MinecraftApp::kCentralPartition = 0.5f;
+const float MinecraftApp::kMoveDistance = 0.8f;
+const float MinecraftApp::kJumpForce = 0.3f;
+const float MinecraftApp::kGravityForce = 0.03f;
+const float MinecraftApp::kRotationSpeed = 0.05f;
+const float MinecraftApp::kPlayerHeight = 1.9f;
 const vec2 MinecraftApp::kCoordinatesTextTopLeft = vec2(10, 10);
 const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
 const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
@@ -36,21 +43,21 @@ const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
 const size_t MinecraftApp::kChunkRadius = 2;  // increasing this significantly
                                               // impacts lag
 const size_t MinecraftApp::kRenderRadius = 15;
-const float MinecraftApp::kPlayerStartingHeight = 10.0f;
-const int MinecraftApp::kMinHeight = -3;
-const int MinecraftApp::kMaxHeight = 2;
+const vec3 MinecraftApp::kPlayerStartingPosition = vec3(0, 10, 0);
+const int MinecraftApp::kMinTerrainHeight = -3;
+const int MinecraftApp::kMaxTerrainHeight = 2;
 const float MinecraftApp::kTerrainVariance = 10.0f;
 const size_t MinecraftApp::kMaxSeedLength = 100000;
 const float MinecraftApp::kDirectionalAngleAllowance = 0.2f;
 
 MinecraftApp::MinecraftApp()
-    : camera_(vec3(0, kPlayerStartingHeight, 0)),
-      terrain_generator_(kMinHeight, kMaxHeight, kTerrainVariance,
-                         rand() % kMaxSeedLength),
-      world_(&terrain_generator_, vec3(0, kPlayerStartingHeight, 0),
-             kChunkRadius) {
+    : seed_(rand() % kMaxSeedLength),
+      camera_(kPlayerStartingPosition),
+      terrain_generator_(kMinTerrainHeight, kMaxTerrainHeight, kTerrainVariance,
+                         seed_),
+      world_(&terrain_generator_, kPlayerStartingPosition, kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
-  current_chunk_ = world_.GetChunk(vec3(0, kPlayerStartingHeight, 0));
+  current_chunk_ = world_.GetChunk(kPlayerStartingPosition);
 }
 
 void MinecraftApp::draw() {
@@ -133,14 +140,16 @@ bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
 }
 
 void MinecraftApp::DrawUI() {
+  drawString("seed: " + to_string(seed_), kCoordinatesTextTopLeft,
+             kCoordinatesTextColor, kCoordinatesTextFont);
   drawString("x: " + to_string(int(camera_.GetTransform().x)),
-             kCoordinatesTextTopLeft, kCoordinatesTextColor,
-             kCoordinatesTextFont);
-  drawString("y: " + to_string(int(camera_.GetTransform().y)),
              kCoordinatesTextTopLeft + vec2(0, kCoordinatesSpacing),
              kCoordinatesTextColor, kCoordinatesTextFont);
-  drawString("z: " + to_string(int(camera_.GetTransform().z)),
+  drawString("y: " + to_string(int(camera_.GetTransform().y)),
              kCoordinatesTextTopLeft + vec2(0, 2 * kCoordinatesSpacing),
+             kCoordinatesTextColor, kCoordinatesTextFont);
+  drawString("z: " + to_string(int(camera_.GetTransform().z)),
+             kCoordinatesTextTopLeft + vec2(0, 3 * kCoordinatesSpacing),
              kCoordinatesTextColor, kCoordinatesTextFont);
 }
 

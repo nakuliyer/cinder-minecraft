@@ -1,11 +1,12 @@
 #ifndef MINECRAFT_BLOCK_H
 #define MINECRAFT_BLOCK_H
 
+#include <cinder/gl/gl.h>
+
 #include <string>
 #include <vector>
 
-#include "cinder/gl/gl.h"
-#include "core/block_types.h"
+#include "block_types.h"
 
 namespace minecraft {
 

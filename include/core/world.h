@@ -2,13 +2,13 @@
 #define MINECRAFT_WORLD_H
 
 #include <FastNoiseLite.h>
+#include <cinder/gl/gl.h>
 
 #include <unordered_map>
 #include <vector>
 
-#include "cinder/gl/gl.h"
-#include "core/block.h"
-#include "core/block_types.h"
+#include "block.h"
+#include "block_types.h"
 #include "terrain_generator.h"
 
 namespace minecraft {
