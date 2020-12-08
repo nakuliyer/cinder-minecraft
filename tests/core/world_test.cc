@@ -27,8 +27,8 @@ class FlatTerrainGenerator : public TerrainGenerator {
 
 class TestableWorld : public World {
  public:
-  TestableWorld(TerrainGenerator* terrainGenerator,
-                const vec3& originPosition, size_t chunkRadius)
+  TestableWorld(TerrainGenerator* terrainGenerator, const vec3& originPosition,
+                size_t chunkRadius)
       : World(terrainGenerator, originPosition, chunkRadius) {
   }
 
@@ -37,15 +37,25 @@ class TestableWorld : public World {
   }
 };
 
-TEST_CASE("Creating a terrain of chunks and getting blocks") {
-  FlatTerrainGenerator flat_terrain_generator(-1, 1, 0, 0);
-  TestableWorld world(&flat_terrain_generator, vec3(0, 0, 0), 2);
+FlatTerrainGenerator flat_terrain_generator(-1, 1, 0, 0);
+TestableWorld world(&flat_terrain_generator, vec3(0, 0, 0), 2);
+vector<Block> blocks = world.GetBlocks();
 
+TEST_CASE("Creating a terrain of chunks and getting blocks") {
   SECTION("Initial chunks loaded") {
-    vector<Block> blocks = world.GetBlocks();
     std::cout << blocks.size() << std::endl;
+    int i = 0;
     for (const Block& block : blocks) {
-      std::cout << block.GetCenter() << std::endl;
+      if (block.GetCenter().x == 6) {
+        std::cout << i << " " << block.GetCenter() << std::endl;
+        ++i;
+      }
     }
+  }
+}
+
+TEST_CASE("Chunk loading") {
+  SECTION("Initial chunks have the right size") {
+    REQUIRE(blocks.size() == 12 * 12 * 2);
   }
 }
