@@ -22,7 +22,6 @@ class World {
   /// \param terrain_generator terrain generator
   /// \param origin_position player's origin
   /// \param chunk_radius radius of each chunk
-  /// \param render_radius radius to render blocks
   World(TerrainGenerator* terrain_generator, const ci::vec3& origin_position,
         size_t chunk_radius);
 
@@ -31,8 +30,9 @@ class World {
   /// if the player has moved between chunks, unloads the distance chunks from
   /// the blocks array and loads the new adjacent chunks
   ///
-  /// \param player_transform the player's location
-  /// \param camera_forward the camera's forward vector
+  /// \param origin the player's location
+  /// \param forward the camera's forward vector
+  /// \param render_radius radius to render blocks
   void Render(const ci::vec3& origin, const ci::vec3& forward,
               float field_of_view_angle, size_t render_radius) const;
 
@@ -49,6 +49,8 @@ class World {
   ///
   /// \param origin a vector
   /// \param forward a vector
+  /// \param directional_angle_allowance maximum angle difference for a block to
+  /// be considered "in the direction" of the camera's forward vector
   void OutlineBlockInDirectionOf(const ci::vec3& origin,
                                  const ci::vec3& forward,
                                  float directional_angle_allowance) const;
@@ -57,6 +59,8 @@ class World {
   ///
   /// \param origin a vector
   /// \param forward a vector
+  /// \param directional_angle_allowance maximum angle difference for a block to
+  /// be considered "in the direction" of the camera's forward vector
   void DeleteBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
                                 float directional_angle_allowance);
 
@@ -64,6 +68,8 @@ class World {
   ///
   /// \param origin a vector
   /// \param forward a vector
+  /// \param directional_angle_allowance maximum angle difference for a block to
+  /// be considered "in the direction" of the camera's forward vector
   void CreateBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
                                 const BlockTypes& block_type,
                                 float directional_angle_allowance);
@@ -158,6 +164,7 @@ class World {
                                  const ci::vec3& forward,
                                  float directional_angle_allowance) const;
 
+  /// aligns `vector` to an axis unit vector
   static ci::vec3 FindAxisAlignedUnitVector(const ci::vec3& vector);
 
   /// whether or not a block should be rendered in a particular frame
