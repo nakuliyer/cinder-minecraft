@@ -12,9 +12,8 @@ using std::string;
 
 namespace minecraft {
 
-const map<BlockTypes, string> Texture::kTextureFiles = {{kGrass, "grass.png"},
-                                                        {kDirt, "dirt.png"},
-                                                        {kStone, "stone.png"}};
+const map<BlockTypes, string> Texture::kTextureFiles = {
+    {kGrass, "grass.png"}, {kDirt, "dirt.png"}, {kStone, "stone.png"}};
 const string Texture::kTestTexture = "test.png";
 
 Texture::Texture(const BlockTypes &block_type) : block_type_(block_type) {
@@ -22,6 +21,7 @@ Texture::Texture(const BlockTypes &block_type) : block_type_(block_type) {
 
 #ifdef DONT_USE_TEXTURES
 Texture2dRef Texture::GetTexture() {
+  std::move(block_type_);  // avoid unused variable error
   return nullptr;
 }
 #elif defined USE_TEST_TEXTURES

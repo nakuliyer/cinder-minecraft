@@ -6,6 +6,7 @@
 #include <cinder/app/RendererGl.h>
 #include <cinder/gl/gl.h>
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -43,13 +44,15 @@ class MinecraftApp : public ci::app::App {
   /// the player's height, used to break fall on the group
   static const float kPlayerHeight;
   /// attributes for the UI text
-  static const ci::vec2 kCoordinatesTextTopLeft;
+  static const ci::vec2 kLeftUITextPosition;
   /// attributes for the UI text
-  static const ci::Color kCoordinatesTextColor;
+  static const ci::vec2 kRightUITextPosition;
   /// attributes for the UI text
-  static const ci::Font kCoordinatesTextFont;
+  static const ci::Color kUITextColor;
   /// attributes for the UI text
-  static const float kCoordinatesSpacing;
+  static const ci::Font kUITextFont;
+  /// attributes for the UI text
+  static const float kUITextSpacing;
   /// field of view angle, blocks are not rendered outside this
   static const float kFieldOfViewAngle;
   /// radius of the chunks, see `world.h` for the usage
@@ -83,6 +86,8 @@ class MinecraftApp : public ci::app::App {
   TerrainGenerator terrain_generator_;
   World world_;
   std::vector<int> current_chunk_;
+  std::map<BlockTypes, size_t> inventory_;
+  BlockTypes current_placing_type_;
 
   void DrawUI();
   void MoveIfPossible(float delta_x, float delta_y);

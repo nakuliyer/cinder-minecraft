@@ -61,8 +61,11 @@ class World {
   /// \param forward a vector
   /// \param directional_angle_allowance maximum angle difference for a block to
   /// be considered "in the direction" of the camera's forward vector
-  void DeleteBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
-                                float directional_angle_allowance);
+  /// \return type of the deleted block, or `BlockTypes::kNone` if no block was
+  /// deleted
+  BlockTypes DeleteBlockInDirectionOf(const ci::vec3& origin,
+                                      const ci::vec3& forward,
+                                      float directional_angle_allowance);
 
   /// deleted the closest block in the direction of `forward` from `origin`
   ///
@@ -70,7 +73,8 @@ class World {
   /// \param forward a vector
   /// \param directional_angle_allowance maximum angle difference for a block to
   /// be considered "in the direction" of the camera's forward vector
-  void CreateBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
+  /// \return true if and only if a block was created
+  bool CreateBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
                                 const BlockTypes& block_type,
                                 float directional_angle_allowance);
 

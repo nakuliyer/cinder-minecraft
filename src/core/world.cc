@@ -171,24 +171,28 @@ void World::OutlineBlockInDirectionOf(const vec3& origin, const vec3& forward,
   }
 }
 
-void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward,
-                                     float directional_angle_allowance) {
+BlockTypes World::DeleteBlockInDirectionOf(const vec3& origin,
+                                           const vec3& forward,
+                                           float directional_angle_allowance) {
   size_t closest_block =
       GetBlockIndexInDirectionOf(origin, forward, directional_angle_allowance);
   if (closest_block != -1) {
     player_map_edits_.insert(pair<vec3, BlockTypes>(
         blocks_.at(closest_block).GetCenter(), BlockTypes::kNone));
+    BlockTypes deleted_block_type = blocks_.at(closest_block).GetType();
     blocks_.erase(blocks_.begin() + closest_block);
+    return deleted_block_type;
   }
+  return BlockTypes::kNone;
 }
 
-void World::CreateBlockInDirectionOf(const vec3& origin, const vec3& forward,
+bool World::CreateBlockInDirectionOf(const vec3& origin, const vec3& forward,
                                      const BlockTypes& block_type,
                                      float directional_angle_allowance) {
   size_t closest_block_index =
       GetBlockIndexInDirectionOf(origin, forward, directional_angle_allowance);
   if (closest_block_index == -1) {
-    return;
+    return false;
   }
   vec3 closest_block = blocks_.at(closest_block_index).GetCenter();
   vec3 displacement = origin - closest_block;
@@ -198,7 +202,9 @@ void World::CreateBlockInDirectionOf(const vec3& origin, const vec3& forward,
     player_map_edits_.insert(
         pair<vec3, BlockTypes>(desired_hit_box, block_type));
     blocks_.emplace_back(block_type, desired_hit_box);
+    return true;
   }
+  return false;
 }
 
 float World::GetAngle(const vec3& first, const vec3& second) {

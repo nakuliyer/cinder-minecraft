@@ -122,12 +122,15 @@ TEST_CASE("Deleting a block from a direction") {
   TestableWorld world(&testing_terrain_generator, vec3(0, 0, 0), 2);
 
   SECTION("Not looking at any block") {
-    world.DeleteBlockInDirectionOf(vec3(0, 1, 0), vec3(1, 0, 0), 0.1);
+    REQUIRE(world.DeleteBlockInDirectionOf(vec3(0, 1, 0), vec3(1, 0, 0), 0.1) ==
+            BlockTypes::kNone);
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2);
   }
 
   SECTION("Looking at a block") {
-    world.DeleteBlockInDirectionOf(vec3(0, 1, 0), vec3(0.707, -0.707, 0), 0.1);
+    REQUIRE(world.DeleteBlockInDirectionOf(vec3(0, 1, 0),
+                                           vec3(0.707, -0.707, 0),
+                                           0.1) == BlockTypes::kGrass);
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2 - 1);
     for (const Block& block : world.GetBlocks()) {
       if (block.GetCenter() == vec3(1, 0, 0)) {
@@ -141,14 +144,14 @@ TEST_CASE("Creating a block from a direction") {
   TestableWorld world(&testing_terrain_generator, vec3(4, 0, 0), 2);
 
   SECTION("Not looking at any block") {
-    world.CreateBlockInDirectionOf(vec3(4, 1, 0), vec3(0.707, 0.707, 0),
-                                   BlockTypes::kDirt, 0.1);
+    REQUIRE_FALSE(world.CreateBlockInDirectionOf(
+        vec3(4, 1, 0), vec3(0.707, 0.707, 0), BlockTypes::kDirt, 0.1));
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2 + 1);
   }
 
   SECTION("Looking at a block from front/back") {
-    world.CreateBlockInDirectionOf(vec3(4, 1, 0), vec3(1, 0, 0),
-                                   BlockTypes::kDirt, 0.1);
+    REQUIRE(world.CreateBlockInDirectionOf(vec3(4, 1, 0), vec3(1, 0, 0),
+                                           BlockTypes::kDirt, 0.1));
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2 + 2);
     bool created = false;
     for (const Block& block : world.GetBlocks()) {
@@ -161,8 +164,8 @@ TEST_CASE("Creating a block from a direction") {
   }
 
   SECTION("Looking at a block from side") {
-    world.CreateBlockInDirectionOf(vec3(7, 1, 2), vec3(0, 0, -1),
-                                   BlockTypes::kDirt, 0.1);
+    REQUIRE(world.CreateBlockInDirectionOf(vec3(7, 1, 2), vec3(0, 0, -1),
+                                           BlockTypes::kDirt, 0.1));
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2 + 2);
     bool created = false;
     for (const Block& block : world.GetBlocks()) {
@@ -175,8 +178,8 @@ TEST_CASE("Creating a block from a direction") {
   }
 
   SECTION("Looking at a block from top/bottom") {
-    world.CreateBlockInDirectionOf(vec3(7, 3, 0), vec3(0, -1, 0),
-                                   BlockTypes::kDirt, 0.1);
+    REQUIRE(world.CreateBlockInDirectionOf(vec3(7, 3, 0), vec3(0, -1, 0),
+                                           BlockTypes::kDirt, 0.1));
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2 + 2);
     bool created = false;
     for (const Block& block : world.GetBlocks()) {
@@ -188,6 +191,8 @@ TEST_CASE("Creating a block from a direction") {
     REQUIRE(created);
   }
 }
+
+// TODO: block deletion/creation and hashing
 
 // note: if `CreateBlockInDirectionOf` and `DeleteBlockInDirectionOf` pass, the
 // underlying implementation of the more difficult-to-test

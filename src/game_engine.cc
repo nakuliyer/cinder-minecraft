@@ -35,10 +35,11 @@ const float MinecraftApp::kJumpForce = 0.3f;
 const float MinecraftApp::kGravityForce = 0.03f;
 const float MinecraftApp::kRotationSpeed = 0.05f;
 const float MinecraftApp::kPlayerHeight = 2.0f;
-const vec2 MinecraftApp::kCoordinatesTextTopLeft = vec2(10, 10);
-const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
-const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
-const float MinecraftApp::kCoordinatesSpacing = 20.0f;
+const vec2 MinecraftApp::kLeftUITextPosition = vec2(10, 10);
+const vec2 MinecraftApp::kRightUITextPosition = vec2(10, kWindowSize - 70);
+const Color MinecraftApp::kUITextColor = Color(0, 255, 0);
+const Font MinecraftApp::kUITextFont = Font("Courier-Bold", 18.0f);
+const float MinecraftApp::kUITextSpacing = 20.0f;
 const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
 const size_t MinecraftApp::kChunkRadius = 2;   // increasing this significantly
                                                // impacts lag
@@ -50,7 +51,7 @@ const int MinecraftApp::kMinTerrainHeight = -3;
 const int MinecraftApp::kMaxTerrainHeight = 2;
 const float MinecraftApp::kTerrainVariance = 10.0f;
 const size_t MinecraftApp::kMaxSeedLength = 100000;
-const float MinecraftApp::kDirectionalAngleAllowance = 0.2f;
+const float MinecraftApp::kDirectionalAngleAllowance = 0.3f;
 
 MinecraftApp::MinecraftApp()
     : seed_(rand() % kMaxSeedLength),
@@ -60,6 +61,8 @@ MinecraftApp::MinecraftApp()
       world_(&terrain_generator_, kPlayerStartingPosition, kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
   current_chunk_ = world_.GetChunk(kPlayerStartingPosition);
+  inventory_ = {{kGrass, 0}, {kDirt, 0}, {kStone, 0}};
+  current_placing_type_ = kGrass;
 }
 
 void MinecraftApp::draw() {
@@ -113,13 +116,20 @@ void MinecraftApp::keyDown(KeyEvent e) {
       camera_.ApplyYForce(kJumpForce);
     }
   } else if (e.getCode() == KeyEvent::KEY_q) {
-    world_.DeleteBlockInDirectionOf(camera_.GetTransform(),
-                                    camera_.GetForwardVector(),
-                                    kDirectionalAngleAllowance);
-  } else if (e.getCode() == KeyEvent::KEY_e) {
-    world_.CreateBlockInDirectionOf(
-        camera_.GetTransform(), camera_.GetForwardVector(), BlockTypes::kGrass,
+    BlockTypes deleted = world_.DeleteBlockInDirectionOf(
+        camera_.GetTransform(), camera_.GetForwardVector(),
         kDirectionalAngleAllowance);
+    ++inventory_.at(deleted);
+
+  } else if (e.getCode() == KeyEvent::KEY_e) {
+    if (inventory_.at(current_placing_type_) > 0) {
+      bool created = world_.CreateBlockInDirectionOf(
+          camera_.GetTransform(), camera_.GetForwardVector(),
+          current_placing_type_, kDirectionalAngleAllowance);
+      if (created) {
+        --inventory_.at(current_placing_type_);
+      }
+    }
   }
 }
 
@@ -139,17 +149,25 @@ bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
 }
 
 void MinecraftApp::DrawUI() {
-  drawString("seed: " + to_string(seed_), kCoordinatesTextTopLeft,
-             kCoordinatesTextColor, kCoordinatesTextFont);
+  drawString("seed: " + to_string(seed_), kLeftUITextPosition, kUITextColor,
+             kUITextFont);
   drawString("x: " + to_string(int(camera_.GetTransform().x)),
-             kCoordinatesTextTopLeft + vec2(0, kCoordinatesSpacing),
-             kCoordinatesTextColor, kCoordinatesTextFont);
+             kLeftUITextPosition + vec2(0, kUITextSpacing), kUITextColor,
+             kUITextFont);
   drawString("y: " + to_string(int(camera_.GetTransform().y)),
-             kCoordinatesTextTopLeft + vec2(0, 2 * kCoordinatesSpacing),
-             kCoordinatesTextColor, kCoordinatesTextFont);
+             kLeftUITextPosition + vec2(0, 2 * kUITextSpacing), kUITextColor,
+             kUITextFont);
   drawString("z: " + to_string(int(camera_.GetTransform().z)),
-             kCoordinatesTextTopLeft + vec2(0, 3 * kCoordinatesSpacing),
-             kCoordinatesTextColor, kCoordinatesTextFont);
+             kLeftUITextPosition + vec2(0, 3 * kUITextSpacing), kUITextColor,
+             kUITextFont);
+  drawString("(1) Grass Block: " + to_string(inventory_.at(kGrass)),
+             kRightUITextPosition, kUITextColor, kUITextFont);
+  drawString("(2) Dirt: " + to_string(inventory_.at(kDirt)),
+             kRightUITextPosition + vec2(0, kUITextSpacing), kUITextColor,
+             kUITextFont);
+  drawString("(3) Stone: " + to_string(inventory_.at(kStone)),
+             kRightUITextPosition + vec2(0, 2 * kUITextSpacing), kUITextColor,
+             kUITextFont);
 }
 
 void MinecraftApp::PanScreen(const ci::vec2& mouse_point) {
