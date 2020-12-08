@@ -29,15 +29,12 @@ Texture2dRef Texture::GetTexture() {
 }
 #else
 Texture2dRef Texture::GetTexture() {
-  return Texture2d::create(loadImage(getAssetPath(GetTextureFileName())));
+  if (kTextureFiles.find(block_type_) != kTextureFiles.end()) {
+    return Texture2d::create(
+        loadImage(getAssetPath(kTextureFiles.at(block_type_))));
+  }
+  throw invalid_argument("Invalid texture name.");
 }
 #endif
-
-string Texture::GetTextureFileName() {
-  if (kTextureFiles.find(block_type_) != kTextureFiles.end()) {
-    return kTextureFiles.at(block_type_);
-  }
-  throw invalid_argument("Cannot get texture of null block.");
-}
 
 }  // namespace minecraft

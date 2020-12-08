@@ -9,16 +9,25 @@
 namespace minecraft {
 
 class Texture {
+  /// mapping of block types to textures
   static const std::map<BlockTypes, std::string> kTextureFiles;
+  /// a texture used for testing, where the faces of the block will be the
+  /// numbers 1 to 6 in the face-order TOP, FRONT, RIGHT, BACK, LEFT, BOTTOM
   static const std::string kTestTexture;
+
  public:
-  explicit Texture(const BlockTypes& block_type);
+  /// creates a texture
+  ///
+  /// \param block_type the block type for this texture (cannot be
+  /// `BlockTypes::kNone`!)
+  Texture(const BlockTypes& block_type);
+
+  /// \return the texture
   ci::gl::Texture2dRef GetTexture();
 
  private:
+  /// this block type
   BlockTypes block_type_;
-
-  std::string GetTextureFileName();
 };
 
 }  // namespace minecraft
