@@ -94,9 +94,9 @@ void World::LoadNextChunks(const vector<int>& old_chunk,
 }
 
 vector<int> World::GetChunk(const vec3& point) const {
-  return vector<int>{int(point.x / (2.0f * chunk_radius_)),
-                     int(point.y / (2.0f * chunk_radius_)),
-                     int(point.z / (2.0f * chunk_radius_))};
+  return vector<int>{int(floor(point.x / (2.0f * chunk_radius_) + 0.5f)),
+                     int(floor(point.y / (2.0f * chunk_radius_) + 0.5f)),
+                     int(floor(point.z / (2.0f * chunk_radius_) + 0.5f))};
 }
 
 void World::InitializeAdjacentChunks(const vector<int>& origin_chunk) {
