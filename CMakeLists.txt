@@ -87,6 +87,15 @@ ci_make_app(
 )
 
 ci_make_app(
+        APP_NAME minecraft-manual-test
+        CINDER_PATH ${CINDER_PATH}
+        SOURCES apps/cinder_app_main.cc ${SOURCE_FILES}
+        INCLUDES include
+        LIBRARIES catch2 fastnoise
+)
+target_compile_definitions(minecraft-manual-test PUBLIC USE_TEST_TEXTURES=1)
+
+ci_make_app(
         APP_NAME        minecraft-test
         CINDER_PATH     ${CINDER_PATH}
         SOURCES         tests/test_main.cc ${SOURCE_FILES} ${TEST_FILES}

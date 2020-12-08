@@ -8,10 +8,9 @@
 
 namespace minecraft {
 
-static const std::map<BlockTypes, std::string> kTextureFiles = {
-    {kGrass, "grass.png"}, {kDirt, "dirt.png"}};
-
 class Texture {
+  static const std::map<BlockTypes, std::string> kTextureFiles;
+  static const std::string kTestTexture;
  public:
   explicit Texture(const BlockTypes& block_type);
   ci::gl::Texture2dRef GetTexture();
