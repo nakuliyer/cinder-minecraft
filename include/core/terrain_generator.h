@@ -8,7 +8,7 @@
 
 namespace minecraft {
 
-/// simple class which implements a noise function to generate terrain
+/// extendable class which implements a noise function to generate terrain
 class TerrainGenerator {
  public:
   /// constructs a simple terrain generator
@@ -24,15 +24,7 @@ class TerrainGenerator {
   ///
   /// \param transform vector
   /// \return block type, or `BlockTypes::kNone` for air
-  BlockTypes GetBlockAt(const ci::vec3& transform);
-
-  /// Gets the terrain height
-  ///
-  /// \param x coordinate
-  /// \param z coordinate
-  /// \return some value between the constructor's passed `min_height` and
-  /// `max_height`
-  int GetTerrainHeight(int x, int z);
+  virtual BlockTypes GetBlockAt(const ci::vec3& transform);
 
  private:
   /// minimum height, i.e. sea level
@@ -44,6 +36,14 @@ class TerrainGenerator {
   float variance_;
   /// Perlin noise terrain generator
   FastNoiseLite noise_;
+
+  /// Gets the terrain height
+  ///
+  /// \param x coordinate
+  /// \param z coordinate
+  /// \return some value between the constructor's passed `min_height` and
+  /// `max_height`
+  int GetTerrainHeight(int x, int z);
 };
 
 }  // namespace minecraft

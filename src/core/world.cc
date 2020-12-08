@@ -18,7 +18,7 @@ using std::vector;
 
 namespace minecraft {
 
-World::World(const TerrainGenerator& terrain_generator,
+World::World(TerrainGenerator* terrain_generator,
              const ci::vec3& origin_position, size_t chunk_radius)
     : terrain_generator_(terrain_generator), chunk_radius_(chunk_radius) {
   InitializeAdjacentChunks(GetChunk(origin_position));
@@ -142,7 +142,7 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
   if (player_map_edits_.find(transform) != player_map_edits_.end()) {
     return player_map_edits_.at(transform);
   }
-  return terrain_generator_.GetBlockAt(transform);
+  return terrain_generator_->GetBlockAt(transform);
 }
 
 int World::GetBlockIndexInDirectionOf(const vec3& origin, const vec3& forward,

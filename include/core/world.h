@@ -23,8 +23,8 @@ class World {
   /// \param origin_position player's origin
   /// \param chunk_radius radius of each chunk
   /// \param render_radius radius to render blocks
-  World(const TerrainGenerator& terrain_generator,
-        const ci::vec3& origin_position, size_t chunk_radius);
+  World(TerrainGenerator* terrain_generator, const ci::vec3& origin_position,
+        size_t chunk_radius);
 
   /// renders the blocks in the player's chunk and all adjacent chunks if they
   /// are within rendering distance and in front of the player's field of view.
@@ -110,7 +110,7 @@ class World {
 
  private:
   /// terrain generator
-  TerrainGenerator terrain_generator_;
+  TerrainGenerator* terrain_generator_;
   /// radius of chunks
   size_t chunk_radius_;
 

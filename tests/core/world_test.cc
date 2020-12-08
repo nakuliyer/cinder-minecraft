@@ -16,9 +16,9 @@ class FlatTerrainGenerator : public TerrainGenerator {
   }
 
   BlockTypes GetBlockAt(const ci::vec3& transform) {
-    if (transform.y == 7) {
+    if (transform.y == 0) {
       return BlockTypes::kGrass;
-    } else if (transform.y == 6) {
+    } else if (transform.y == -1) {
       return BlockTypes::kDirt;
     }
     return BlockTypes::kNone;
@@ -27,7 +27,7 @@ class FlatTerrainGenerator : public TerrainGenerator {
 
 class TestableWorld : public World {
  public:
-  TestableWorld(const TerrainGenerator& terrainGenerator,
+  TestableWorld(TerrainGenerator* terrainGenerator,
                 const vec3& originPosition, size_t chunkRadius)
       : World(terrainGenerator, originPosition, chunkRadius) {
   }
@@ -39,7 +39,7 @@ class TestableWorld : public World {
 
 TEST_CASE("Creating a terrain of chunks and getting blocks") {
   FlatTerrainGenerator flat_terrain_generator(-1, 1, 0, 0);
-  TestableWorld world(flat_terrain_generator, vec3(0, 0, 0), 2);
+  TestableWorld world(&flat_terrain_generator, vec3(0, 0, 0), 2);
 
   SECTION("Initial chunks loaded") {
     vector<Block> blocks = world.GetBlocks();
