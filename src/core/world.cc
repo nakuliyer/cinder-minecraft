@@ -19,6 +19,9 @@ using std::vector;
 namespace minecraft {
 
 const float World::kDirectionalAngleAllowance = 0.2f;
+const int World::kSeaLevel = -3;
+const int World::kMaxHeight = 5;
+const float World::kNoiseVariance = 10.0f;
 
 World::World(const ci::vec3& origin_position, size_t chunk_radius)
     : chunk_radius_(chunk_radius) {
@@ -146,17 +149,23 @@ BlockTypes World::GetBlockAt(const vec3& transform) {
 }
 
 BlockTypes World::GenerateBlockAt(const vec3& transform) {
-  if (map_.find(transform) != map_.end()) {
-    return map_.at(transform);
+  if (player_map_edits_.find(transform) != player_map_edits_.end()) {
+    return player_map_edits_.at(transform);
   }
-  float height =
-      noise_.GetNoise(round(transform.x) * 10.0f, round(transform.z) * 10.0f);
-  if (int(round(transform.y)) == int(height * 5.0f - 3.0f)) {
+  int height = GetGrassHeight(transform.x, transform.z);
+  if (int(round(transform.y)) == height) {
     return BlockTypes::kGrass;
-  } else if (int(round(transform.y)) < int(height * 5.0f - 3.0f)) {
+  } else if (int(round(transform.y)) < height) {
     return BlockTypes::kDirt;
   }
   return BlockTypes::kNone;
+}
+
+int World::GetGrassHeight(float x, float z) {
+  float height_delta = kMaxHeight - kSeaLevel;
+  float noise_function =
+      noise_.GetNoise(round(x) * kNoiseVariance, round(z) * kNoiseVariance);
+  return int(noise_function * height_delta - kSeaLevel);
 }
 
 int World::GetBlockIndexInDirectionOf(const vec3& origin,
@@ -187,8 +196,8 @@ void World::OutlineBlockInDirectionOf(const vec3& origin,
 void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward) {
   size_t closest_block = GetBlockIndexInDirectionOf(origin, forward);
   if (closest_block != -1) {
-    map_.insert(pair<vec3, BlockTypes>(blocks_.at(closest_block).GetCenter(),
-                                       BlockTypes::kNone));
+    player_map_edits_.insert(pair<vec3, BlockTypes>(
+        blocks_.at(closest_block).GetCenter(), BlockTypes::kNone));
     blocks_.erase(blocks_.begin() + closest_block);
   }
 }
@@ -204,7 +213,8 @@ void World::CreateBlockInDirectionOf(const vec3& origin, const vec3& forward,
   vec3 desired_hit_box =
       FindAxisAlignedUnitVector(displacement) + closest_block;
   if (GetBlockAt(desired_hit_box) == kNone) {
-    map_.insert(pair<vec3, BlockTypes>(desired_hit_box, block_type));
+    player_map_edits_.insert(
+        pair<vec3, BlockTypes>(desired_hit_box, block_type));
     blocks_.emplace_back(block_type, desired_hit_box);
   }
 }

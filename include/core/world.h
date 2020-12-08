@@ -17,6 +17,14 @@ class World {
   /// angle difference allowed between displacement and the camera's forward
   /// vector for a block to be considered "in the direction" of the camera
   static const float kDirectionalAngleAllowance;
+  /// for terrain generation, the lowest level a grass block can be at (i.e.
+  /// lowest canyon height)
+  static const int kSeaLevel;
+  /// for terrain generation, the highest level a grass block can be at (i.e.
+  /// highest hill height)
+  static const int kMaxHeight;
+  /// for terrain generation, more noise variance means more hills/canyons
+  static const float kNoiseVariance;
 
  public:
   /// initializes the terrain noise function and generates chunks adjacent to
@@ -107,8 +115,9 @@ class World {
   std::vector<Block> blocks_;
   /// Perlin noise terrain generator
   FastNoiseLite noise_;
-  /// a map of points to blocks for saving and loading
-  std::unordered_map<ci::vec3, BlockTypes, BlockHasher> map_;
+  /// a map of points to blocks used if a player alters the map from the
+  /// expected seed output
+  std::unordered_map<ci::vec3, BlockTypes, BlockHasher> player_map_edits_;
 
   /// initialization step, generates all chunks near the player at the start of
   /// game
@@ -152,6 +161,13 @@ class World {
   /// `forward` from `origin`, or -1 if there is no such block
   int GetBlockIndexInDirectionOf(const ci::vec3& origin,
                                  const ci::vec3& forward) const;
+
+  /// gets the y height of grass based on the noise function and parameters
+  ///
+  /// \param x coordinate
+  /// \param z coordinate
+  /// \return a value between the minimum and maximum allowed heights
+  int GetGrassHeight(float x, float z);
 
   static ci::vec3 FindAxisAlignedUnitVector(const ci::vec3& vector);
 

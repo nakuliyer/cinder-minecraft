@@ -14,7 +14,7 @@ class Camera {
   const float kTerminalVelocity = -6.0f;
 
  public:
-  Camera() = default;
+  Camera(const ci::vec3& initial_position);
   void Render() const;
   ci::vec3 GetForwardVector() const;
   void ApplyYForce(float force);

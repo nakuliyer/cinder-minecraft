@@ -35,11 +35,13 @@ const float MinecraftApp::kCoordinatesSpacing = 20.0f;
 const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
 const size_t MinecraftApp::kChunkRadius = 2;
 const size_t MinecraftApp::kRenderRadius = 8;
+const float MinecraftApp::kPlayerStartingHeight = 10.0f;
 
-// TODO: not always start at origin
-MinecraftApp::MinecraftApp() : world_(vec3(0, 0, 0), kChunkRadius) {
+MinecraftApp::MinecraftApp()
+    : camera_(vec3(0, kPlayerStartingHeight, 0)),
+      world_(vec3(0, kPlayerStartingHeight, 0), kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
-  current_chunk_ = {0, 0, 0};
+  current_chunk_ = world_.GetChunk(vec3(0, kPlayerStartingHeight, 0));
 }
 
 void MinecraftApp::draw() {

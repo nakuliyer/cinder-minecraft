@@ -17,6 +17,9 @@ using minecraft::Camera;
 
 namespace minecraft {
 
+Camera::Camera(const vec3 &initial_position) : transform_(initial_position) {
+}
+
 void Camera::Render() const {
   enableDepthRead();
   enableDepthWrite();

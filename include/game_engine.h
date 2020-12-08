@@ -31,6 +31,7 @@ class MinecraftApp : public ci::app::App {
   static const float kFieldOfViewAngle;
   static const size_t kChunkRadius;
   static const size_t kRenderRadius;
+  static const float kPlayerStartingHeight;
 
  public:
   MinecraftApp();
