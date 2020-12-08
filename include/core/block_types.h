@@ -4,7 +4,7 @@
 namespace minecraft {
 
 /// the different block types in this game
-enum BlockTypes { kNone, kGrass, kDirt };
+enum BlockTypes { kNone, kGrass, kDirt, kStone };
 
 }  // namespace minecraft
 

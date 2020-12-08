@@ -13,7 +13,8 @@ using std::string;
 namespace minecraft {
 
 const map<BlockTypes, string> Texture::kTextureFiles = {{kGrass, "grass.png"},
-                                                        {kDirt, "dirt.png"}};
+                                                        {kDirt, "dirt.png"},
+                                                        {kStone, "stone.png"}};
 const string Texture::kTestTexture = "test.png";
 
 Texture::Texture(const BlockTypes &block_type) : block_type_(block_type) {

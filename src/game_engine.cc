@@ -40,9 +40,11 @@ const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
 const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
 const float MinecraftApp::kCoordinatesSpacing = 20.0f;
 const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
-const size_t MinecraftApp::kChunkRadius = 2;  // increasing this significantly
-                                              // impacts lag
-const size_t MinecraftApp::kRenderRadius = 15;
+const size_t MinecraftApp::kChunkRadius = 2;   // increasing this significantly
+                                               // impacts lag
+const size_t MinecraftApp::kRenderRadius = 8;  // increasing this significantly
+                                               // impacts lag, especially
+                                               // underground
 const vec3 MinecraftApp::kPlayerStartingPosition = vec3(0, 10, 0);
 const int MinecraftApp::kMinTerrainHeight = -3;
 const int MinecraftApp::kMaxTerrainHeight = 2;
@@ -103,7 +105,7 @@ void MinecraftApp::keyDown(KeyEvent e) {
     // derived through projectile motion physics
     if (BlockExistsAt(0, -kPlayerHeight, 0)) {
       int max_height = ceil(kJumpForce * kJumpForce / (2 * kGravityForce));
-      for (size_t i = 1e; i <= max_height; ++i) {
+      for (size_t i = 1; i <= max_height; ++i) {
         if (BlockExistsAt(0, i, 0)) {
           return;
         }

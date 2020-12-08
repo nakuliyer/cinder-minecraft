@@ -18,8 +18,10 @@ BlockTypes TerrainGenerator::GetBlockAt(const vec3& transform) {
   int lattice_y = int(round(transform.y));
   if (lattice_y == height) {
     return BlockTypes::kGrass;
-  } else if (lattice_y < height) {
+  } else if (0 <= lattice_y && lattice_y < height) {
     return BlockTypes::kDirt;
+  } else if (lattice_y < height) {
+    return BlockTypes::kStone;
   }
   return BlockTypes::kNone;
 }
