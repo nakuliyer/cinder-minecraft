@@ -153,13 +153,7 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
   if (player_map_edits_.find(transform) != player_map_edits_.end()) {
     return player_map_edits_.at(transform);
   }
-  int height = terrain_generator_.GetTerrainHeight(transform.x, transform.z);
-  if (int(round(transform.y)) == height) {
-    return BlockTypes::kGrass;
-  } else if (int(round(transform.y)) < height) {
-    return BlockTypes::kDirt;
-  }
-  return BlockTypes::kNone;
+  return terrain_generator_.GetBlockAt(transform);
 }
 
 int World::GetBlockIndexInDirectionOf(const vec3& origin,

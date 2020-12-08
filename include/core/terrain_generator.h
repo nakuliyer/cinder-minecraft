@@ -3,6 +3,9 @@
 
 #include <FastNoiseLite.h>
 
+#include "block_types.h"
+#include "cinder/gl/gl.h"
+
 namespace minecraft {
 
 /// simple class which implements a noise function to generate terrain
@@ -16,6 +19,12 @@ class TerrainGenerator {
   /// (around 10.0f) for more varied terrain
   /// \param seed seed for Perlin noise
   TerrainGenerator(int min_height, int max_height, float variance, int seed);
+
+  /// gets the block at (x, y, z)
+  ///
+  /// \param transform vector
+  /// \return block type, or `BlockTypes::kNone` for air
+  BlockTypes GetBlockAt(const ci::vec3& transform);
 
   /// Gets the terrain height
   ///

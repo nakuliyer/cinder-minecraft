@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using ci::vec3;
+
 namespace minecraft {
 
 TerrainGenerator::TerrainGenerator(int min_height, int max_height,
@@ -9,7 +11,17 @@ TerrainGenerator::TerrainGenerator(int min_height, int max_height,
     : min_height_(min_height), max_height_(max_height), variance_(variance) {
   noise_ = FastNoiseLite(seed);
   noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-  std::cout << seed << std::endl;
+}
+
+BlockTypes TerrainGenerator::GetBlockAt(const vec3& transform) {
+  int height = GetTerrainHeight(transform.x, transform.z);
+  int lattice_y = int(round(transform.y));
+  if (lattice_y == height) {
+    return BlockTypes::kGrass;
+  } else if (lattice_y < height) {
+    return BlockTypes::kDirt;
+  }
+  return BlockTypes::kNone;
 }
 
 int TerrainGenerator::GetTerrainHeight(int x, int z) {
