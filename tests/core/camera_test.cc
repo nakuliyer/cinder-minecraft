@@ -42,3 +42,10 @@ TEST_CASE("Camera can rotate and get a forward unit vector") {
     REQUIRE(epsilonEqual(camera.GetForwardVector(), vec3(0.362, 0, -0.932)));
   }
 }
+
+TEST_CASE("Applying Y forces") {
+  Camera camera(vec3(0, 0, 0));
+
+  camera.ApplyYForce(-9.81f);
+  REQUIRE(camera.GetTransform() == vec3(0, -9.81f, 0));
+}

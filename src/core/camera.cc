@@ -17,7 +17,8 @@ using minecraft::Camera;
 
 namespace minecraft {
 
-Camera::Camera(const vec3 &initial_position) : transform_(initial_position) {
+Camera::Camera(const vec3 &initial_position, float terminal_velocity)
+    : transform_(initial_position), terminal_velocity_(terminal_velocity) {
 }
 
 void Camera::Render() const {
@@ -36,7 +37,7 @@ vec3 Camera::GetForwardVector() const {
 }
 
 void Camera::ApplyYForce(float force) {
-  y_velocity_ = std::max(y_velocity_ + force, kTerminalVelocity);
+  y_velocity_ = std::max(y_velocity_ + force, terminal_velocity_);
   transform_.y += y_velocity_;
 }
 

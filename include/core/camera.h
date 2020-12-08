@@ -11,10 +11,8 @@
 namespace minecraft {
 
 class Camera {
-  const float kTerminalVelocity = -6.0f;
-
  public:
-  Camera(const ci::vec3& initial_position);
+  Camera(const ci::vec3& initial_position, float terminal_velocity = -6.0f);
   void Render() const;
   ci::vec3 GetForwardVector() const;
   void ApplyYForce(float force);
@@ -31,6 +29,7 @@ class Camera {
   ci::vec3 transform_;
   ci::vec2 rotation_;
   float y_velocity_;
+  float terminal_velocity_;
 };
 
 }  // namespace minecraft
