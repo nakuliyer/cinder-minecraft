@@ -18,20 +18,9 @@ using std::vector;
 
 namespace minecraft {
 
-const float World::kDirectionalAngleAllowance = 0.2f;
-const int World::kSeaLevel = -3;
-const int World::kMaxHeight = 5;
-const float World::kNoiseVariance = 10.0f;
-
 World::World(const TerrainGenerator& terrain_generator,
              const ci::vec3& origin_position, size_t chunk_radius)
     : terrain_generator_(terrain_generator), chunk_radius_(chunk_radius) {
-  random_device rd;
-  mt19937 mt(rd());
-  uniform_int_distribution<int> dist(INT_MIN, INT_MAX);
-  int seed = dist(mt);
-  noise_ = FastNoiseLite(seed);
-  noise_.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
   InitializeAdjacentChunks(GetChunk(origin_position));
 }
 
@@ -156,14 +145,14 @@ BlockTypes World::GenerateBlockAt(const vec3& transform) {
   return terrain_generator_.GetBlockAt(transform);
 }
 
-int World::GetBlockIndexInDirectionOf(const vec3& origin,
-                                      const vec3& forward) const {
+int World::GetBlockIndexInDirectionOf(const vec3& origin, const vec3& forward,
+                                      float directional_angle_allowance) const {
   float min_distance = FLT_MAX;
   int closest_block = -1;
   size_t index = 0;
   for (const Block& block : blocks_) {
     vec3 displacement = block.GetCenter() - origin;
-    if (GetAngle(forward, displacement) <= kDirectionalAngleAllowance &&
+    if (GetAngle(forward, displacement) <= directional_angle_allowance &&
         length(displacement) < min_distance) {
       min_distance = length(displacement);
       closest_block = index;
@@ -173,16 +162,19 @@ int World::GetBlockIndexInDirectionOf(const vec3& origin,
   return closest_block;
 }
 
-void World::OutlineBlockInDirectionOf(const vec3& origin,
-                                      const vec3& forward) const {
-  int closest_block = GetBlockIndexInDirectionOf(origin, forward);
+void World::OutlineBlockInDirectionOf(const vec3& origin, const vec3& forward,
+                                      float directional_angle_allowance) const {
+  int closest_block =
+      GetBlockIndexInDirectionOf(origin, forward, directional_angle_allowance);
   if (closest_block != -1) {
     drawStrokedCube(blocks_.at(closest_block).GetCenter(), vec3(1, 1, 1));
   }
 }
 
-void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward) {
-  size_t closest_block = GetBlockIndexInDirectionOf(origin, forward);
+void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward,
+                                     float directional_angle_allowance) {
+  size_t closest_block =
+      GetBlockIndexInDirectionOf(origin, forward, directional_angle_allowance);
   if (closest_block != -1) {
     player_map_edits_.insert(pair<vec3, BlockTypes>(
         blocks_.at(closest_block).GetCenter(), BlockTypes::kNone));
@@ -191,8 +183,10 @@ void World::DeleteBlockInDirectionOf(const vec3& origin, const vec3& forward) {
 }
 
 void World::CreateBlockInDirectionOf(const vec3& origin, const vec3& forward,
-                                     const BlockTypes& block_type) {
-  size_t closest_block_index = GetBlockIndexInDirectionOf(origin, forward);
+                                     const BlockTypes& block_type,
+                                     float directional_angle_allowance) {
+  size_t closest_block_index =
+      GetBlockIndexInDirectionOf(origin, forward, directional_angle_allowance);
   if (closest_block_index == -1) {
     return;
   }

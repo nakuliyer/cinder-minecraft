@@ -15,18 +15,6 @@ namespace minecraft {
 
 /// cinder-compatible world
 class World {
-  /// angle difference allowed between displacement and the camera's forward
-  /// vector for a block to be considered "in the direction" of the camera
-  static const float kDirectionalAngleAllowance;
-  /// for terrain generation, the lowest level a grass block can be at (i.e.
-  /// lowest canyon height)
-  static const int kSeaLevel;
-  /// for terrain generation, the highest level a grass block can be at (i.e.
-  /// highest hill height)
-  static const int kMaxHeight;
-  /// for terrain generation, more noise variance means more hills/canyons
-  static const float kNoiseVariance;
-
  public:
   /// initializes the terrain noise function and generates chunks adjacent to
   /// the player
@@ -62,21 +50,23 @@ class World {
   /// \param origin a vector
   /// \param forward a vector
   void OutlineBlockInDirectionOf(const ci::vec3& origin,
-                                 const ci::vec3& forward) const;
+                                 const ci::vec3& forward,
+                                 float directional_angle_allowance) const;
 
   /// deleted the closest block in the direction of `forward` from `origin`
   ///
   /// \param origin a vector
   /// \param forward a vector
-  void DeleteBlockInDirectionOf(const ci::vec3& origin,
-                                const ci::vec3& forward);
+  void DeleteBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
+                                float directional_angle_allowance);
 
   /// deleted the closest block in the direction of `forward` from `origin`
   ///
   /// \param origin a vector
   /// \param forward a vector
   void CreateBlockInDirectionOf(const ci::vec3& origin, const ci::vec3& forward,
-                                const BlockTypes& block_type);
+                                const BlockTypes& block_type,
+                                float directional_angle_allowance);
 
   /// \param old_chunk player's old chunk
   /// \param new_position player's new position
@@ -117,8 +107,6 @@ class World {
   size_t chunk_radius_;
   /// current set of blocks in the current chunk and all adjacent chunks
   std::vector<Block> blocks_;
-  /// Perlin noise terrain generator
-  FastNoiseLite noise_;
   /// a map of points to blocks used if a player alters the map from the
   /// expected seed output
   std::unordered_map<ci::vec3, BlockTypes, BlockHasher> player_map_edits_;
@@ -164,14 +152,8 @@ class World {
   /// gets the index in `blocks_` of the closest block in the direction of
   /// `forward` from `origin`, or -1 if there is no such block
   int GetBlockIndexInDirectionOf(const ci::vec3& origin,
-                                 const ci::vec3& forward) const;
-
-  /// gets the y height of grass based on the noise function and parameters
-  ///
-  /// \param x coordinate
-  /// \param z coordinate
-  /// \return a value between the minimum and maximum allowed heights
-  int GetGrassHeight(float x, float z);
+                                 const ci::vec3& forward,
+                                 float directional_angle_allowance) const;
 
   static ci::vec3 FindAxisAlignedUnitVector(const ci::vec3& vector);
 

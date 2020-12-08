@@ -33,13 +33,20 @@ const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
 const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
 const float MinecraftApp::kCoordinatesSpacing = 20.0f;
 const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
-const size_t MinecraftApp::kChunkRadius = 2;
-const size_t MinecraftApp::kRenderRadius = 8;
+const size_t MinecraftApp::kChunkRadius = 2;  // increasing this significantly
+                                              // impacts lag
+const size_t MinecraftApp::kRenderRadius = 15;
 const float MinecraftApp::kPlayerStartingHeight = 10.0f;
+const int MinecraftApp::kMinHeight = -3;
+const int MinecraftApp::kMaxHeight = 2;
+const float MinecraftApp::kTerrainVariance = 10.0f;
+const size_t MinecraftApp::kMaxSeedLength = 100000;
+const float MinecraftApp::kDirectionalAngleAllowance = 0.2f;
 
 MinecraftApp::MinecraftApp()
     : camera_(vec3(0, kPlayerStartingHeight, 0)),
-      terrain_generator_(-3, 2, 10.0f, rand() % 100000),
+      terrain_generator_(kMinHeight, kMaxHeight, kTerrainVariance,
+                         rand() % kMaxSeedLength),
       world_(terrain_generator_, vec3(0, kPlayerStartingHeight, 0),
              kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
@@ -54,7 +61,8 @@ void MinecraftApp::draw() {
   world_.Render(camera_.GetTransform(), camera_.GetForwardVector(),
                 kFieldOfViewAngle, kRenderRadius);
   world_.OutlineBlockInDirectionOf(camera_.GetTransform(),
-                                   camera_.GetForwardVector());
+                                   camera_.GetForwardVector(),
+                                   kDirectionalAngleAllowance);
 }
 
 void MinecraftApp::update() {
@@ -96,12 +104,13 @@ void MinecraftApp::keyDown(KeyEvent e) {
       break;
     case KeyEvent::KEY_q:
       world_.DeleteBlockInDirectionOf(camera_.GetTransform(),
-                                      camera_.GetForwardVector());
+                                      camera_.GetForwardVector(),
+                                      kDirectionalAngleAllowance);
       break;
     case KeyEvent::KEY_e:
-      world_.CreateBlockInDirectionOf(camera_.GetTransform(),
-                                      camera_.GetForwardVector(),
-                                      BlockTypes::kGrass);
+      world_.CreateBlockInDirectionOf(
+          camera_.GetTransform(), camera_.GetForwardVector(),
+          BlockTypes::kGrass, kDirectionalAngleAllowance);
       break;
     default:
       break;

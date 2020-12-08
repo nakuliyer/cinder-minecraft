@@ -33,6 +33,14 @@ class MinecraftApp : public ci::app::App {
   static const size_t kChunkRadius;
   static const size_t kRenderRadius;
   static const float kPlayerStartingHeight;
+  static const int kMinHeight;
+  static const int kMaxHeight;
+  static const float kTerrainVariance;
+  static const size_t kMaxSeedLength;
+  /// angle difference (in radians) allowed between displacement and the
+  /// camera's forward vector for a block to be considered "in the direction" of
+  /// the camera
+  static const float kDirectionalAngleAllowance;
 
  public:
   MinecraftApp();
