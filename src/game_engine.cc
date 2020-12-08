@@ -34,7 +34,7 @@ const float MinecraftApp::kMoveDistance = 0.8f;
 const float MinecraftApp::kJumpForce = 0.3f;
 const float MinecraftApp::kGravityForce = 0.03f;
 const float MinecraftApp::kRotationSpeed = 0.05f;
-const float MinecraftApp::kPlayerHeight = 1.9f;
+const float MinecraftApp::kPlayerHeight = 2.0f;
 const vec2 MinecraftApp::kCoordinatesTextTopLeft = vec2(10, 10);
 const Color MinecraftApp::kCoordinatesTextColor = Color(0, 255, 0);
 const Font MinecraftApp::kCoordinatesTextFont = Font("Courier-Bold", 18.0f);
@@ -91,36 +91,33 @@ void MinecraftApp::update() {
 
 void MinecraftApp::keyDown(KeyEvent e) {
   vec3 forward = camera_.GetForwardVector();
-  switch (e.getCode()) {
-    case KeyEvent::KEY_w:
-      MoveIfPossible(kMoveDistance * forward.x, kMoveDistance * forward.z);
-      break;
-    case KeyEvent::KEY_d:
-      MoveIfPossible(-kMoveDistance * forward.z, kMoveDistance * forward.x);
-      break;
-    case KeyEvent::KEY_s:
-      MoveIfPossible(-kMoveDistance * forward.x, -kMoveDistance * forward.z);
-      break;
-    case KeyEvent::KEY_a:
-      MoveIfPossible(kMoveDistance * forward.z, -kMoveDistance * forward.x);
-      break;
-    case KeyEvent::KEY_SPACE:
-      if (BlockExistsAt(0, -kPlayerHeight, 0)) {
-        camera_.ApplyYForce(kJumpForce);
+  if (e.getCode() == KeyEvent::KEY_w) {
+    MoveIfPossible(kMoveDistance * forward.x, kMoveDistance * forward.z);
+  } else if (e.getCode() == KeyEvent::KEY_d) {
+    MoveIfPossible(-kMoveDistance * forward.z, kMoveDistance * forward.x);
+  } else if (e.getCode() == KeyEvent::KEY_s) {
+    MoveIfPossible(-kMoveDistance * forward.x, -kMoveDistance * forward.z);
+  } else if (e.getCode() == KeyEvent::KEY_a) {
+    MoveIfPossible(kMoveDistance * forward.z, -kMoveDistance * forward.x);
+  } else if (e.getCode() == KeyEvent::KEY_SPACE) {
+    // derived through projectile motion physics
+    if (BlockExistsAt(0, -kPlayerHeight, 0)) {
+      int max_height = ceil(kJumpForce * kJumpForce / (2 * kGravityForce));
+      for (size_t i = 1e; i <= max_height; ++i) {
+        if (BlockExistsAt(0, i, 0)) {
+          return;
+        }
       }
-      break;
-    case KeyEvent::KEY_q:
-      world_.DeleteBlockInDirectionOf(camera_.GetTransform(),
-                                      camera_.GetForwardVector(),
-                                      kDirectionalAngleAllowance);
-      break;
-    case KeyEvent::KEY_e:
-      world_.CreateBlockInDirectionOf(
-          camera_.GetTransform(), camera_.GetForwardVector(),
-          BlockTypes::kGrass, kDirectionalAngleAllowance);
-      break;
-    default:
-      break;
+      camera_.ApplyYForce(kJumpForce);
+    }
+  } else if (e.getCode() == KeyEvent::KEY_q) {
+    world_.DeleteBlockInDirectionOf(camera_.GetTransform(),
+                                    camera_.GetForwardVector(),
+                                    kDirectionalAngleAllowance);
+  } else if (e.getCode() == KeyEvent::KEY_e) {
+    world_.CreateBlockInDirectionOf(
+        camera_.GetTransform(), camera_.GetForwardVector(), BlockTypes::kGrass,
+        kDirectionalAngleAllowance);
   }
 }
 
