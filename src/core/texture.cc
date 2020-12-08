@@ -14,9 +14,15 @@ namespace minecraft {
 Texture::Texture(const BlockTypes &block_type) : block_type_(block_type) {
 }
 
+#ifdef DONT_USE_TEXTURES
+Texture2dRef Texture::GetTexture() {
+  return nullptr;
+}
+#else
 Texture2dRef Texture::GetTexture() {
   return Texture2d::create(loadImage(getAssetPath(GetTextureFileName())));
 }
+#endif
 
 string Texture::GetTextureFileName() {
   if (kTextureFiles.find(block_type_) != kTextureFiles.end()) {

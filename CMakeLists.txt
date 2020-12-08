@@ -92,6 +92,7 @@ ci_make_app(
         INCLUDES        include
         LIBRARIES       catch2 fastnoise
 )
+target_compile_definitions(minecraft-test PUBLIC DONT_USE_TEXTURES=1)
 
 
 if (MSVC)
