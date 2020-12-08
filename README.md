@@ -6,8 +6,8 @@
 Nakul Iyer - [nakuli2@illinois.edu](mailto:nakuli2@illinois.edu)
 
 ## Overview
-![](docs_assets/demo.gif)
-\* graphics are severely scaled-down for demonstration <br/>
+![](docs_assets/demo.gif) <br/>
+\* graphics are severely scaled-down for demonstration <br/><br/>
 Cinder Minecraft is a clone of the popular video game. 
 
 ## Dependencies
