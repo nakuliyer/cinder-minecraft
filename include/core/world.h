@@ -91,7 +91,8 @@ class World {
   /// \return a chunk
   std::vector<int> GetChunk(const ci::vec3& point) const;
 
- private:
+ protected:
+  /// method of hashing blocks
   struct BlockHasher {
     // https://stackoverflow.com/questions/24003071/hashing-function-not-working-properly
     std::size_t operator()(const glm::ivec3& key) const {
@@ -101,15 +102,17 @@ class World {
       return ((key.x * 5209) ^ (key.y * 1811)) ^ (key.z * 7297);
     }
   };
-  /// terrain generator
-  TerrainGenerator terrain_generator_;
-  /// radius of chunks
-  size_t chunk_radius_;
   /// current set of blocks in the current chunk and all adjacent chunks
   std::vector<Block> blocks_;
   /// a map of points to blocks used if a player alters the map from the
   /// expected seed output
   std::unordered_map<ci::vec3, BlockTypes, BlockHasher> player_map_edits_;
+
+ private:
+  /// terrain generator
+  TerrainGenerator terrain_generator_;
+  /// radius of chunks
+  size_t chunk_radius_;
 
   /// initialization step, generates all chunks near the player at the start of
   /// game
