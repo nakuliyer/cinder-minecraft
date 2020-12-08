@@ -73,6 +73,9 @@ list(APPEND SOURCE_FILES src/core/block.cc)
 list(APPEND SOURCE_FILES src/core/texture.cc)
 list(APPEND SOURCE_FILES src/game_engine.cc)
 
+# Testing files
+list(APPEND TEST_FILES tests/core/world_test.cc)
+
 ci_make_app(
         APP_NAME minecraft
         CINDER_PATH ${CINDER_PATH}
@@ -80,6 +83,15 @@ ci_make_app(
         INCLUDES include
         LIBRARIES catch2 fastnoise
 )
+
+ci_make_app(
+        APP_NAME        minecraft-test
+        CINDER_PATH     ${CINDER_PATH}
+        SOURCES         tests/test_main.cc ${SOURCE_FILES} ${TEST_FILES}
+        INCLUDES        include
+        LIBRARIES       catch2 fastnoise
+)
+
 
 if (MSVC)
     set_property(TARGET ideal-gas-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
