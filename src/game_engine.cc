@@ -2,10 +2,12 @@
 
 #include "cinder/Utilities.h"
 #include "cinder/app/Window.h"
+#include "core/texture.h"
 
 using ci::CameraPersp;
 using ci::Color;
 using ci::Font;
+using ci::Rectf;
 using ci::vec2;
 using ci::vec3;
 using ci::app::KeyEvent;
@@ -23,6 +25,7 @@ using ci::gl::FboRef;
 using ci::gl::setMatrices;
 using ci::gl::setMatricesWindow;
 using minecraft::Camera;
+using minecraft::Texture;
 using std::to_string;
 using std::vector;
 
@@ -36,10 +39,12 @@ const float MinecraftApp::kGravityForce = 0.03f;
 const float MinecraftApp::kRotationSpeed = 0.05f;
 const float MinecraftApp::kPlayerHeight = 2.0f;
 const vec2 MinecraftApp::kLeftUITextPosition = vec2(10, 10);
-const vec2 MinecraftApp::kRightUITextPosition = vec2(10, kWindowSize - 70);
+const vec2 MinecraftApp::kRightUITextPosition = vec2(30, kWindowSize - 100);
 const Color MinecraftApp::kUITextColor = Color(0, 255, 0);
 const Font MinecraftApp::kUITextFont = Font("Courier-Bold", 18.0f);
 const float MinecraftApp::kUITextSpacing = 20.0f;
+const float MinecraftApp::kUIIconSpacing = 25.0f;
+const vec2 MinecraftApp::kUIIconSize = vec2(20, 20);
 const float MinecraftApp::kFieldOfViewAngle = 1.0472f;
 const size_t MinecraftApp::kChunkRadius = 2;   // increasing this significantly
                                                // impacts lag
@@ -52,6 +57,8 @@ const int MinecraftApp::kMaxTerrainHeight = 2;
 const float MinecraftApp::kTerrainVariance = 10.0f;
 const size_t MinecraftApp::kMaxSeedLength = 100000;
 const float MinecraftApp::kDirectionalAngleAllowance = 0.3f;
+const vector<BlockTypes> MinecraftApp::kOrderedBlocks = {
+    BlockTypes::kGrass, BlockTypes::kDirt, BlockTypes::kStone};
 
 MinecraftApp::MinecraftApp()
     : seed_(rand() % kMaxSeedLength),
@@ -62,7 +69,6 @@ MinecraftApp::MinecraftApp()
   setWindowSize((int)kWindowSize, (int)kWindowSize);
   current_chunk_ = world_.GetChunk(kPlayerStartingPosition);
   inventory_ = {{kGrass, 0}, {kDirt, 0}, {kStone, 0}};
-  current_placing_type_ = kGrass;
 }
 
 void MinecraftApp::draw() {
@@ -122,13 +128,24 @@ void MinecraftApp::keyDown(KeyEvent e) {
     ++inventory_.at(deleted);
 
   } else if (e.getCode() == KeyEvent::KEY_e) {
-    if (inventory_.at(current_placing_type_) > 0) {
+    BlockTypes block_type(kOrderedBlocks.at(current_placing_type_));
+    if (inventory_.at(block_type) > 0) {
       bool created = world_.CreateBlockInDirectionOf(
-          camera_.GetTransform(), camera_.GetForwardVector(),
-          current_placing_type_, kDirectionalAngleAllowance);
+          camera_.GetTransform(), camera_.GetForwardVector(), block_type,
+          kDirectionalAngleAllowance);
       if (created) {
-        --inventory_.at(current_placing_type_);
+        --inventory_.at(block_type);
       }
+    }
+  } else if (e.getCode() == KeyEvent::KEY_DOWN) {
+    ++current_placing_type_;
+    if (current_placing_type_ == kOrderedBlocks.size()) {
+      current_placing_type_ = 0;
+    }
+  } else if (e.getCode() == KeyEvent::KEY_UP) {
+    --current_placing_type_;
+    if (current_placing_type_ == -1) {
+      current_placing_type_ = kOrderedBlocks.size() - 1;
     }
   }
 }
@@ -160,14 +177,21 @@ void MinecraftApp::DrawUI() {
   drawString("z: " + to_string(int(camera_.GetTransform().z)),
              kLeftUITextPosition + vec2(0, 3 * kUITextSpacing), kUITextColor,
              kUITextFont);
-  drawString("(1) Grass Block: " + to_string(inventory_.at(kGrass)),
-             kRightUITextPosition, kUITextColor, kUITextFont);
-  drawString("(2) Dirt: " + to_string(inventory_.at(kDirt)),
-             kRightUITextPosition + vec2(0, kUITextSpacing), kUITextColor,
-             kUITextFont);
-  drawString("(3) Stone: " + to_string(inventory_.at(kStone)),
-             kRightUITextPosition + vec2(0, 2 * kUITextSpacing), kUITextColor,
-             kUITextFont);
+  for (int i = 0; i < kOrderedBlocks.size(); ++i) {
+    vec2 space = vec2(0, float(i) * kUIIconSpacing);
+    Rectf icon(kRightUITextPosition + space,
+               kRightUITextPosition + kUIIconSize + space);
+    ci::gl::draw(Texture::GetIcon(kOrderedBlocks.at(i)), icon);
+    std::string starred = " ";
+    if (current_placing_type_ == i) {
+      starred = "*";
+    }
+    drawString(
+        starred + "   : " + to_string(inventory_.at(kOrderedBlocks.at(i))),
+        kRightUITextPosition + space +
+            vec2(-kUITextFont.getSize(), kUIIconSize.y / 4),
+        kUITextColor, kUITextFont);
+  }
 }
 
 void MinecraftApp::PanScreen(const ci::vec2& mouse_point) {

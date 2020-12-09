@@ -54,3 +54,4 @@ The app will be present in the opened finder window. It may be moved anywhere in
 * All credit for the concept of this game belongs to Mojang Studios, and the original game may be [downloaded here](https://www.minecraft.net/en-us)
 * Texture used for grass: [https://www.html5gamedevs.com/uploads/monthly_2016_03/1356119798126.thumb.png.102fb982bde3cd0b4b3ce3bdbe98082a.png](https://www.html5gamedevs.com/uploads/monthly_2016_03/1356119798126.thumb.png.102fb982bde3cd0b4b3ce3bdbe98082a.png)
 * Texture used for stone: [http://minecrafttemplate.blogspot.com/2012/05/minecraft-seamless-background-images.html](http://minecrafttemplate.blogspot.com/2012/05/minecraft-seamless-background-images.html)
+* Icons are from: [https://minecraft.gamepedia.com](https://minecraft.gamepedia.com)

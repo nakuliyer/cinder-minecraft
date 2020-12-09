@@ -53,6 +53,10 @@ class MinecraftApp : public ci::app::App {
   static const ci::Font kUITextFont;
   /// attributes for the UI text
   static const float kUITextSpacing;
+  /// attributes for the icons in the UI
+  static const float kUIIconSpacing;
+  /// icon size in UI
+  static const ci::vec2 kUIIconSize;
   /// field of view angle, blocks are not rendered outside this
   static const float kFieldOfViewAngle;
   /// radius of the chunks, see `world.h` for the usage
@@ -73,6 +77,8 @@ class MinecraftApp : public ci::app::App {
   /// camera's forward vector for a block to be considered "in the direction" of
   /// the camera
   static const float kDirectionalAngleAllowance;
+  /// all blocks
+  static const std::vector<BlockTypes> kOrderedBlocks;
 
  public:
   MinecraftApp();
@@ -87,7 +93,7 @@ class MinecraftApp : public ci::app::App {
   World world_;
   std::vector<int> current_chunk_;
   std::map<BlockTypes, size_t> inventory_;
-  BlockTypes current_placing_type_;
+  int current_placing_type_;
 
   void DrawUI();
   void MoveIfPossible(float delta_x, float delta_y);

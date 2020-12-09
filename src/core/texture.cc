@@ -14,6 +14,10 @@ namespace minecraft {
 
 const map<BlockTypes, string> Texture::kTextureFiles = {
     {kGrass, "grass.png"}, {kDirt, "dirt.png"}, {kStone, "stone.png"}};
+const map<BlockTypes, string> Texture::kIconFiles = {
+    {kGrass, "grass_icon.png"},
+    {kDirt, "dirt_icon.png"},
+    {kStone, "stone_icon.png"}};
 const string Texture::kTestTexture = "test.png";
 
 Texture::Texture(const BlockTypes &block_type) : block_type_(block_type) {
@@ -34,8 +38,17 @@ Texture2dRef Texture::GetTexture() {
     return Texture2d::create(
         loadImage(getAssetPath(kTextureFiles.at(block_type_))));
   }
-  throw invalid_argument("Invalid texture name.");
+  throw invalid_argument(std::to_string(block_type_) +
+                         " does not have a texture");
 }
 #endif
+
+Texture2dRef Texture::GetIcon(BlockTypes block_type) {
+  if (kIconFiles.find(block_type) != kIconFiles.end()) {
+    return Texture2d::create(
+        loadImage(getAssetPath(kIconFiles.at(block_type))));
+  }
+  throw invalid_argument(std::to_string(block_type) + " does not have an icon");
+}
 
 }  // namespace minecraft
