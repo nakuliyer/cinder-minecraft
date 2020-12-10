@@ -45,6 +45,8 @@ The app will be present in the opened finder window. It may be moved anywhere in
 | `SPACE`       | Jump                             |
 | `q`           | Delete the block at the cursor   |
 | `e`           | Place a block at the cursor      |
+| `UP`          | Switching blocks for placement   |
+| `DOWN`        | Switching blocks for placement   |
 
 | Mouse/Pad     | Action                           |
 |---------------|----------------------------------|
