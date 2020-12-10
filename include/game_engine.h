@@ -101,6 +101,8 @@ class MinecraftApp : public ci::app::App {
   void DrawIconsInterface();
   void MoveIfPossible(float delta_x, float delta_y);
 
+  void ApplyGravityIfNecessary();
+
   /// derived through projectile motion physics
   void JumpIfPossible();
 

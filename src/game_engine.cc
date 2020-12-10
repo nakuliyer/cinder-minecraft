@@ -91,18 +91,22 @@ void MinecraftApp::draw() {
 
 void MinecraftApp::update() {
   vec2 mouse_point = getWindow()->getMousePos();
+  ApplyGravityIfNecessary();
   if (IsBoundedBy(mouse_point, 0, kWindowSize, 0, kWindowSize)) {
     PanScreen(mouse_point);
-  }
-  if (BlockExistsAt(0, -kPlayerHeight, 0)) {
-    camera_.ApplyNormalForce();
-  } else {
-    camera_.ApplyYForce(-kGravityForce);
   }
   if (world_.HasMovedChunks(current_chunk_, camera_.GetTransform())) {
     vector<int> new_chunk = world_.GetChunk(camera_.GetTransform());
     world_.MoveToChunk(current_chunk_, new_chunk);
     current_chunk_ = new_chunk;
+  }
+}
+
+void MinecraftApp::ApplyGravityIfNecessary() {
+  if (BlockExistsAt(0, -kPlayerHeight, 0)) {
+    camera_.ApplyNormalForce();
+  } else {
+    camera_.ApplyYForce(-kGravityForce);
   }
 }
 
