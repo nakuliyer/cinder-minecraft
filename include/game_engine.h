@@ -16,17 +16,7 @@
 
 namespace minecraft {
 
-/// TODO: move all these inside the class
-static const float kWindowSize = 575.0f;
-static const float kCentralPartition = 0.5f;
-
-static const float kMoveDistance = 0.8f;
-static const float kJumpForce = 0.3f;       // velocity upwards on jump
-static const float kGravityForce = 0.03f;   // acceleration downwards
-static const float kRotationSpeed = 0.05f;  // in radians
-
-static const float kPlayerHeight = 1.9f;
-
+/// the main cinder app
 class MinecraftApp : public ci::app::App {
   /// window size
   static const float kWindowSize;
@@ -81,9 +71,19 @@ class MinecraftApp : public ci::app::App {
   static const std::vector<BlockTypes> kOrderedBlocks;
 
  public:
+  /// creates a minecraft app
   MinecraftApp();
+
+  /// draws the UI to the screen, renders the camera, and renders all blocks.
+  /// see `camera.h` and `world.h`
   void draw() override;
+
+  /// checks where the mouse is to pan the camera, applies gravity, and checks
+  /// whether the player has moved between chunks for chunk loading/deleting
+  /// (see `world.h`)
   void update() override;
+
+  /// applies key-down methods
   void keyDown(ci::app::KeyEvent e) override;
 
  private:
