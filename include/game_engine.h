@@ -89,29 +89,72 @@ class MinecraftApp : public ci::app::App {
   void keyDown(ci::app::KeyEvent e) override;
 
  private:
+  /// world seed
   int seed_;
+  /// camera
   Camera camera_;
+  /// terrain generator (using Perlin noise)
   TerrainGenerator terrain_generator_;
+  /// world, chunk handler
   World world_;
+  /// current chunk
   std::vector<int> current_chunk_;
+  /// player's current inventory
   std::map<BlockTypes, size_t> inventory_;
+  /// the index of the block in kOrderedBlocks that the player is currently
+  /// trying to place
   int current_placing_type_;
 
+  /// draws coordinates at the top of the screen
   void DrawCoordinatesInterface();
-  void DrawIconsInterface();
-  void MoveIfPossible(float delta_x, float delta_y);
 
+  /// draws icons at the bottom
+  void DrawIconsInterface();
+
+  /// moves in the x or z direction if there is no obstacle blocking the move
+  ///
+  /// \param delta_x x distance
+  /// \param delta_z z distance
+  void MoveIfPossible(float delta_x, float delta_z);
+
+  /// applies gravity to the camera if the player is not on ground
   void ApplyGravityIfNecessary();
 
   /// derived through projectile motion physics
   void JumpIfPossible();
 
+  /// deletes the block that the player is looking at if there is such a block
   void DeleteBlockIfPossible();
+
+  /// creates a block if there is a current hit box (next to the block the
+  /// player is currently looking at) and we have enough of the requested type
+  /// of block
   void CreateBlockIfPossible();
 
+  /// increments/decrements `current_placing_type_` and mods around the list
+  ///
+  /// \param direction +1 for incrementing, -1 for decrementing
   void SwitchCurrentPlacingType(int direction);
+
+  /// \param delta_x distance from camera
+  /// \param delta_y distance from camera
+  /// \param delta_z distance from camera
+  /// \return whether there is a block there
   bool BlockExistsAt(float delta_x, float delta_y, float delta_z);
+
+  /// rotates camera if the mouse is in the corresponding region of the screen
+  ///
+  /// \param mouse_point mouse location
   void PanScreen(const ci::vec2& mouse_point);
+
+  /// helper for `PanScreen`
+  ///
+  /// \param point mouse location
+  /// \param x_min region boundary
+  /// \param x_max region boundary
+  /// \param y_min region boundary
+  /// \param y_max region boundary
+  /// \return true if and only if the mouse location is inside the region
   static bool IsBoundedBy(const ci::vec2& point, float x_min, float x_max,
                           float y_min, float y_max);
 };
