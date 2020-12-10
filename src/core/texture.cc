@@ -30,6 +30,7 @@ Texture2dRef Texture::GetTexture() {
 }
 #elif defined USE_TEST_TEXTURES
 Texture2dRef Texture::GetTexture() {
+  std::move(block_type_);  // avoid unused variable error
   return Texture2d::create(loadImage(getAssetPath(kTestTexture)));
 }
 #else
