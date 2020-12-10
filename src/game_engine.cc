@@ -74,7 +74,8 @@ MinecraftApp::MinecraftApp()
 void MinecraftApp::draw() {
   clear();
   setMatricesWindow(getWindowSize());
-  DrawUI();
+  DrawCoordinatesInterface();
+  DrawIconsInterface();
   camera_.Render();
   world_.Render(camera_.GetTransform(), camera_.GetForwardVector(),
                 kFieldOfViewAngle, kRenderRadius);
@@ -165,7 +166,7 @@ bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
   return world_.GetBlockAt(location) != BlockTypes::kNone;
 }
 
-void MinecraftApp::DrawUI() {
+void MinecraftApp::DrawCoordinatesInterface() {
   drawString("seed: " + to_string(seed_), kLeftUITextPosition, kUITextColor,
              kUITextFont);
   drawString("x: " + to_string(int(camera_.GetTransform().x)),
@@ -177,20 +178,24 @@ void MinecraftApp::DrawUI() {
   drawString("z: " + to_string(int(camera_.GetTransform().z)),
              kLeftUITextPosition + vec2(0, 3 * kUITextSpacing), kUITextColor,
              kUITextFont);
+}
+
+void MinecraftApp::DrawIconsInterface() {
   for (int i = 0; i < kOrderedBlocks.size(); ++i) {
     vec2 space = vec2(0, float(i) * kUIIconSpacing);
     Rectf icon(kRightUITextPosition + space,
                kRightUITextPosition + kUIIconSize + space);
     ci::gl::draw(Texture::GetIcon(kOrderedBlocks.at(i)), icon);
-    std::string starred = " ";
+    std::string starred = current_placing_type_ == i ? "*" : " ";
     if (current_placing_type_ == i) {
-      starred = "*";
+      vec2 star_offset(-kUITextFont.getSize() / 2, kUIIconSize.y / 4);
+      drawString(starred, kRightUITextPosition + space + star_offset,
+                 kUITextColor, kUITextFont);
     }
-    drawString(
-        starred + "   : " + to_string(inventory_.at(kOrderedBlocks.at(i))),
-        kRightUITextPosition + space +
-            vec2(-kUITextFont.getSize(), kUIIconSize.y / 4),
-        kUITextColor, kUITextFont);
+    vec2 text_offset(kUIIconSize.x, kUIIconSize.y / 4);
+    drawString(": " + to_string(inventory_.at(kOrderedBlocks.at(i))),
+               kRightUITextPosition + space + text_offset, kUITextColor,
+               kUITextFont);
   }
 }
 

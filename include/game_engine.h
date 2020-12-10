@@ -95,7 +95,8 @@ class MinecraftApp : public ci::app::App {
   std::map<BlockTypes, size_t> inventory_;
   int current_placing_type_;
 
-  void DrawUI();
+  void DrawCoordinatesInterface();
+  void DrawIconsInterface();
   void MoveIfPossible(float delta_x, float delta_y);
   bool BlockExistsAt(float delta_x, float delta_y, float delta_z);
   void PanScreen(const ci::vec2& mouse_point);

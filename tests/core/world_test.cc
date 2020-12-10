@@ -9,6 +9,8 @@ using minecraft::Block;
 using minecraft::BlockTypes;
 using minecraft::TerrainGenerator;
 using minecraft::World;
+using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 /// a semi-flat testing terrain
@@ -41,6 +43,10 @@ class TestableWorld : public World {
 
   vector<Block> GetBlocks() {
     return blocks_;
+  }
+
+  unordered_map<ci::vec3, BlockTypes, BlockHasher> GetPlayerMapEdits() {
+    return player_map_edits_;
   }
 };
 
@@ -125,6 +131,7 @@ TEST_CASE("Deleting a block from a direction") {
     REQUIRE(world.DeleteBlockInDirectionOf(vec3(0, 1, 0), vec3(1, 0, 0), 0.1) ==
             BlockTypes::kNone);
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2);
+    REQUIRE(world.GetPlayerMapEdits().size() == 0);
   }
 
   SECTION("Looking at a block") {
@@ -138,6 +145,12 @@ TEST_CASE("Deleting a block from a direction") {
       }
     }
   }
+
+  SECTION("Deleted block from world edit map") {
+    world.DeleteBlockInDirectionOf(vec3(0, 1, 0), vec3(0.707, -0.707, 0), 0.1);
+    REQUIRE(world.GetPlayerMapEdits().size() == 1);
+    REQUIRE(world.GetPlayerMapEdits().at(vec3(1, 0, 0)) == BlockTypes::kNone);
+  }
 }
 
 TEST_CASE("Creating a block from a direction") {
@@ -147,6 +160,7 @@ TEST_CASE("Creating a block from a direction") {
     REQUIRE_FALSE(world.CreateBlockInDirectionOf(
         vec3(4, 1, 0), vec3(0.707, 0.707, 0), BlockTypes::kDirt, 0.1));
     REQUIRE(world.GetBlocks().size() == 12 * 12 * 2 + 1);
+    REQUIRE(world.GetPlayerMapEdits().size() == 0);
   }
 
   SECTION("Looking at a block from front/back") {
@@ -190,9 +204,46 @@ TEST_CASE("Creating a block from a direction") {
     }
     REQUIRE(created);
   }
+
+  SECTION("Added block to world edit map") {
+    world.CreateBlockInDirectionOf(vec3(7, 3, 0), vec3(0, -1, 0),
+                                   BlockTypes::kDirt, 0.1);
+    REQUIRE(world.GetPlayerMapEdits().size() == 1);
+    REQUIRE(world.GetPlayerMapEdits().at(vec3(7, 2, 0)) == BlockTypes::kDirt);
+  }
 }
 
-// TODO: block deletion/creation and hashing
+TEST_CASE("World edits is preserve through chunk movement") {
+  TestableWorld world(&testing_terrain_generator, vec3(4, 0, 0), 2);
+  world.DeleteBlockInDirectionOf(vec3(0, 1, 0), vec3(0.707, -0.707, 0), 0.1);
+  world.CreateBlockInDirectionOf(vec3(3, 3, 0), vec3(0, -1, 0),
+                                 BlockTypes::kStone, 0.1);
+
+  REQUIRE(world.GetPlayerMapEdits().size() == 2);
+
+  SECTION("Allows chunk unloading and the returning to edited blocks") {
+    world.MoveToChunk({1, 0, 0}, {2, 0, 0});
+    world.MoveToChunk({2, 0, 0}, {3, 0, 0});
+    world.MoveToChunk({3, 0, 0}, {4, 0, 0});  // simulating movement in +x
+    world.MoveToChunk({4, 0, 0}, {5, 0, 0});  // assume chunk {1, 0, 0} is
+                                              // deleted by now based on the
+                                              // success of previous test cases
+    world.MoveToChunk({5, 0, 0}, {4, 0, 0});
+    world.MoveToChunk({4, 0, 0}, {3, 0, 0});
+    world.MoveToChunk({3, 0, 0}, {2, 0, 0});  // this loads chunk {1, 0, 0}
+    bool found_created_block = false;
+    for (const Block& block : world.GetBlocks()) {
+      if (block.GetCenter() == vec3(1, 0, 0)) {
+        FAIL("the deleted block resurfaced as a " + to_string(block.GetType()));
+      }
+      if (block.GetCenter() == vec3(3, 1, 0) &&
+          block.GetType() == BlockTypes::kStone) {
+        found_created_block = true;
+      }
+    }
+    REQUIRE(found_created_block);
+  }
+}
 
 // note: if `CreateBlockInDirectionOf` and `DeleteBlockInDirectionOf` pass, the
 // underlying implementation of the more difficult-to-test
