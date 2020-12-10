@@ -45,6 +45,8 @@ class MinecraftApp : public ci::app::App {
   static const float kUITextSpacing;
   /// attributes for the icons in the UI
   static const float kUIIconSpacing;
+  /// star next to the selected icon
+  static const char kUIIconSelectedMarker;
   /// icon size in UI
   static const ci::vec2 kUIIconSize;
   /// field of view angle, blocks are not rendered outside this
@@ -98,6 +100,14 @@ class MinecraftApp : public ci::app::App {
   void DrawCoordinatesInterface();
   void DrawIconsInterface();
   void MoveIfPossible(float delta_x, float delta_y);
+
+  /// derived through projectile motion physics
+  void JumpIfPossible();
+
+  void DeleteBlockIfPossible();
+  void CreateBlockIfPossible();
+
+  void SwitchCurrentPlacingType(int direction);
   bool BlockExistsAt(float delta_x, float delta_y, float delta_z);
   void PanScreen(const ci::vec2& mouse_point);
   static bool IsBoundedBy(const ci::vec2& point, float x_min, float x_max,

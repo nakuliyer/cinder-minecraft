@@ -26,6 +26,8 @@ using ci::gl::setMatrices;
 using ci::gl::setMatricesWindow;
 using minecraft::Camera;
 using minecraft::Texture;
+using std::pair;
+using std::string;
 using std::to_string;
 using std::vector;
 
@@ -42,6 +44,7 @@ const vec2 MinecraftApp::kLeftUITextPosition = vec2(10, 10);
 const vec2 MinecraftApp::kRightUITextPosition = vec2(30, kWindowSize - 100);
 const Color MinecraftApp::kUITextColor = Color(0, 255, 0);
 const Font MinecraftApp::kUITextFont = Font("Courier-Bold", 18.0f);
+const char MinecraftApp::kUIIconSelectedMarker = '*';
 const float MinecraftApp::kUITextSpacing = 20.0f;
 const float MinecraftApp::kUIIconSpacing = 25.0f;
 const vec2 MinecraftApp::kUIIconSize = vec2(20, 20);
@@ -68,7 +71,9 @@ MinecraftApp::MinecraftApp()
       world_(&terrain_generator_, kPlayerStartingPosition, kChunkRadius) {
   setWindowSize((int)kWindowSize, (int)kWindowSize);
   current_chunk_ = world_.GetChunk(kPlayerStartingPosition);
-  inventory_ = {{kGrass, 0}, {kDirt, 0}, {kStone, 0}};
+  for (const BlockTypes& block_type : kOrderedBlocks) {
+    inventory_.insert(pair<BlockTypes, size_t>(block_type, 0));
+  }
 }
 
 void MinecraftApp::draw() {
@@ -112,42 +117,15 @@ void MinecraftApp::keyDown(KeyEvent e) {
   } else if (e.getCode() == KeyEvent::KEY_a) {
     MoveIfPossible(kMoveDistance * forward.z, -kMoveDistance * forward.x);
   } else if (e.getCode() == KeyEvent::KEY_SPACE) {
-    // derived through projectile motion physics
-    if (BlockExistsAt(0, -kPlayerHeight, 0)) {
-      int max_height = ceil(kJumpForce * kJumpForce / (2 * kGravityForce));
-      for (size_t i = 1; i <= max_height; ++i) {
-        if (BlockExistsAt(0, i, 0)) {
-          return;
-        }
-      }
-      camera_.ApplyYForce(kJumpForce);
-    }
+    JumpIfPossible();
   } else if (e.getCode() == KeyEvent::KEY_q) {
-    BlockTypes deleted = world_.DeleteBlockInDirectionOf(
-        camera_.GetTransform(), camera_.GetForwardVector(),
-        kDirectionalAngleAllowance);
-    ++inventory_.at(deleted);
-
+    DeleteBlockIfPossible();
   } else if (e.getCode() == KeyEvent::KEY_e) {
-    BlockTypes block_type(kOrderedBlocks.at(current_placing_type_));
-    if (inventory_.at(block_type) > 0) {
-      bool created = world_.CreateBlockInDirectionOf(
-          camera_.GetTransform(), camera_.GetForwardVector(), block_type,
-          kDirectionalAngleAllowance);
-      if (created) {
-        --inventory_.at(block_type);
-      }
-    }
+    CreateBlockIfPossible();
   } else if (e.getCode() == KeyEvent::KEY_DOWN) {
-    ++current_placing_type_;
-    if (current_placing_type_ == kOrderedBlocks.size()) {
-      current_placing_type_ = 0;
-    }
+    SwitchCurrentPlacingType(1);
   } else if (e.getCode() == KeyEvent::KEY_UP) {
-    --current_placing_type_;
-    if (current_placing_type_ == -1) {
-      current_placing_type_ = kOrderedBlocks.size() - 1;
-    }
+    SwitchCurrentPlacingType(-1);
   }
 }
 
@@ -159,6 +137,46 @@ void MinecraftApp::MoveIfPossible(float delta_x, float delta_z) {
   }
   camera_.TransformX(delta_x);
   camera_.TransformZ(delta_z);
+}
+
+void MinecraftApp::JumpIfPossible() {
+  if (BlockExistsAt(0, -kPlayerHeight, 0)) {
+    int max_height = ceil(kJumpForce * kJumpForce / (2 * kGravityForce));
+    for (size_t i = 1; i <= max_height; ++i) {
+      if (BlockExistsAt(0, i, 0)) {
+        return;
+      }
+    }
+    camera_.ApplyYForce(kJumpForce);
+  }
+}
+
+void MinecraftApp::DeleteBlockIfPossible() {
+  BlockTypes deleted = world_.DeleteBlockInDirectionOf(
+      camera_.GetTransform(), camera_.GetForwardVector(),
+      kDirectionalAngleAllowance);
+  ++inventory_.at(deleted);
+}
+
+void MinecraftApp::CreateBlockIfPossible() {
+  BlockTypes block_type(kOrderedBlocks.at(current_placing_type_));
+  if (inventory_.at(block_type) > 0) {
+    bool created = world_.CreateBlockInDirectionOf(
+        camera_.GetTransform(), camera_.GetForwardVector(), block_type,
+        kDirectionalAngleAllowance);
+    if (created) {
+      --inventory_.at(block_type);
+    }
+  }
+}
+
+void MinecraftApp::SwitchCurrentPlacingType(int direction) {
+  current_placing_type_ += direction;
+  if (current_placing_type_ == kOrderedBlocks.size()) {
+    current_placing_type_ = 0;
+  } else if (current_placing_type_ == -1) {
+    current_placing_type_ = kOrderedBlocks.size() - 1;
+  }
 }
 
 bool MinecraftApp::BlockExistsAt(float delta_x, float delta_y, float delta_z) {
@@ -186,10 +204,10 @@ void MinecraftApp::DrawIconsInterface() {
     Rectf icon(kRightUITextPosition + space,
                kRightUITextPosition + kUIIconSize + space);
     ci::gl::draw(Texture::GetIcon(kOrderedBlocks.at(i)), icon);
-    std::string starred = current_placing_type_ == i ? "*" : " ";
+    char starred = current_placing_type_ == i ? kUIIconSelectedMarker : ' ';
     if (current_placing_type_ == i) {
       vec2 star_offset(-kUITextFont.getSize() / 2, kUIIconSize.y / 4);
-      drawString(starred, kRightUITextPosition + space + star_offset,
+      drawString(string(1, starred), kRightUITextPosition + space + star_offset,
                  kUITextColor, kUITextFont);
     }
     vec2 text_offset(kUIIconSize.x, kUIIconSize.y / 4);
