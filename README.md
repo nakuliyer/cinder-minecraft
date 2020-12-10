@@ -6,7 +6,7 @@ Nakul Iyer - [nakuli2@illinois.edu](mailto:nakuli2@illinois.edu)
 
 ## Overview
 ![](docs_assets/demo.gif) <br/>
-** Note: graphics are severely scaled-down for demonstration
+** Note: graphics are scaled-down for demonstration, and different in-game activities have been clipped together.
 
 Cinder Minecraft is a very basic clone of the popular video game, *Minecraft*. In this game, you can explore a randomly-generated, infinitely long terrain; you can interact with this world by breaking and placing grass blocks!
 
